@@ -1,21 +1,23 @@
 # property_change_notifier
 
-A drop-in replacement for ChangeNotifier that lets listeners observe only certain properties of a model.
+A drop-in replacement for [ChangeNotifier](https://api.flutter.dev/flutter/foundation/ChangeNotifier-class.html) that lets listeners observe only certain properties of a model.
+
+![](/Users/martin/Projects/property_change_notifier/screenshot.png)
 
 ## Why?
 
-[ChangeNotifier](https://api.flutter.dev/flutter/foundation/ChangeNotifier-class.html) is a useful technique for observing changes to a model. The problem is that takes an all-or-none approach. There is no way to listen only to specific properties. To do so requires every property to be implemented as a [ValueNotifier](https://api.flutter.dev/flutter/foundation/ValueNotifier-class.html), which is a lot of boilerplate. Even then, it is not possible to listen to multiple properties with a single listener.
+[ChangeNotifier](https://api.flutter.dev/flutter/foundation/ChangeNotifier-class.html) is useful for observing changes to a model. The problem is that takes an all-or-none approach. There is no way to listen only to specific properties. To do so requires every property to be implemented as a [ValueNotifier](https://api.flutter.dev/flutter/foundation/ValueNotifier-class.html) or similar. Even then, it is not possible to listen to multiple properties with a single listener.
 
-`PropertyChangeNotifier` is an implementation of the observer pattern provided by [PropertyChangeListener](https://docs.oracle.com/javase/7/docs/api/java/beans/PropertyChangeListener.html) in Java and [INotifyPropertyChanged](https://docs.microsoft.com/en-us/dotnet/api/system.componentmodel.inotifypropertychanged.propertychanged?view=netframework-4.8) in .NET. When a property changes, the name of the property is included in the event. This gives the listener flexibility to handle the event for a particular property or ignore it.
+`PropertyChangeNotifier` is an implementation of a more granular observer pattern similar to [PropertyChangeListener](https://docs.oracle.com/javase/7/docs/api/java/beans/PropertyChangeListener.html) in Java and [INotifyPropertyChanged](https://docs.microsoft.com/en-us/dotnet/api/system.componentmodel.inotifypropertychanged.propertychanged?view=netframework-4.8) in .NET. **When a property changes, the name of the property is included in the event. Listeners can then choose to observe only one or many properties.**
 
 ## How?
 
-`PropertyChangeNotifier` works by extending [ChangeNotifier](https://api.flutter.dev/flutter/foundation/ChangeNotifier-class.html) in a way that makes it 100% backwards compatible with existing code. After replacing `ChangeNotifier` with `PropertyChangeNotifier` in your model, existing code still functions without any changes. However, models can now publish more granular information about property changes, and listeners have the ability to listen to only one or more property changes.
+`PropertyChangeNotifier` works by extending [ChangeNotifier](https://api.flutter.dev/flutter/foundation/ChangeNotifier-class.html) in a way that makes it 100% backwards compatible with existing code. Just replace `ChangeNotifier` with `PropertyChangeNotifier` in your model. Update your model to include the property name when calling `notifyListeners()`. Existing listeners will continue to receive all property updates as before. When you are ready, you can update them to observe only one or more properties.
 
 ## Usage
 
-### Implementation
-Change your model to inherit from `PropertyChangeNotifier`. Wherever `notifyListeners()` is called, add a parameter containing the name of your property. This value is usually a [String](https://api.dartlang.org/stable/2.4.0/dart-core/String-class.html) but can be any Dart [Object](https://api.dartlang.org/stable/2.4.0/dart-core/Object-class.html). The object must correctly implement equality using ``==`` and ``hashCode``.
+### Model implementation
+Change your model to inherit from `PropertyChangeNotifier`. Wherever `notifyListeners()` is called, add a parameter containing the name of your property.
 
 ```
 class Foo extends PropertyChangeNotifier {
@@ -64,7 +66,7 @@ void _listener() {
 ```
 
 ### Listen to all properties
-This is the current behavior of `ChangeNotifier` and is not affected, even if your model calls `notifyListeners()` with a property name.
+This is the current behavior of `ChangeNotifier` and is not affected, even if you've update your model to invoke `notifyListeners()` with a property name.
 
 ```
 final model = Foo();
@@ -77,31 +79,36 @@ void _listener() {
 ```
 
 ### Adding listeners
-Listeners can be added at any time. A listener cannot be `null`. The same listener can be added to multiple properties. The same listener *cannot* be added multiple times to the same property. If you add a listener to a non-existent property, nothing happens. `PropertyChangeNotifier` does not check if the property actually exists. Adding a listener with no property listens to all properties.
+Listeners can be added at any time. A listener cannot be `null`. Adding a listener with no parameters makes it listen to all properties. The same listener can be added to multiple properties. The same listener *cannot* be added multiple times to the same property. It doesn't hurt to add a listener to a non-existent property, but it serves no purpose. `PropertyChangeNotifier` does not check if the property actually exists. 
 
 ```
 final model = Foo();
 model.addListener(_barListener, ['bar']);
-model.addListener(_barBazListener, ['bar']);
-model.addListener(_barBazListener, ['baz']);
+model.addListener(_bothListener, ['bar']);
+model.addListener(_bothListener, ['baz']);
 model.addListener(_allListener);
+
+// _barListener is listening to bar only.
+// _bothListener is listening to bar and baz only.
+// _allListener is listening to all properties.
 
 ```
 
 ### Removing listeners
-Listeners can be removed at any time. A listener can be removed for one or more properties without being removed from other properties. Removing a listener on a property that does not exist is a no-op.
+Listeners can be removed at any time. A listener can be removed from one or more properties without being removed from other properties. Removing a listener on a property that does not exist is a no-op.
 
 ```
 final model = Foo();
 model.addListener(_listener, ['bar', 'baz', 'bah']);
 model.removeListener(_listener, ['bar', 'bah']);
-// _listener is now listening to baz only.
+
+// _listener is listening to baz only.
 
 ```
 
-### Strongly Typed Properties
+### Property names
 
-Referring to properties by strings is error-prone and results in stringly-typed code. To avoid this, you can use string constants:
+Referring to properties by string is error-prone and results in [stringly-typed](https://www.techopedia.com/definition/31876/stringly-typed) code. To avoid this, you can create string constants:
 
 ```
 class FooProperties {
@@ -110,7 +117,7 @@ class FooProperties {
 }
 ```
 
-Or you can use an enum:
+Or you can even create an enum:
 
 ```
 enum FooProperties {
@@ -119,7 +126,7 @@ enum FooProperties {
 }
 ```
 
-Now you can reference these values in your model and listeners so that they can be checked by your compiler:
+Now you can reference these values in both your model and listeners so that they can be safely checked by your compiler:
 
 ```
 // Model
@@ -137,4 +144,4 @@ final model = Foo();
 model.addListener(_listener, [FooProperties.bar, FooProperties.baz]);
 ```
 
-You can even use your own custom types as property names. They must extend [Object](https://api.dartlang.org/stable/2.4.0/dart-core/Object-class.html) and correctly implement equality using ``==`` and ``hashCode``.
+You can even use your own custom types as property names. They just must extend [Object](https://api.dartlang.org/stable/2.4.0/dart-core/Object-class.html) and correctly implement equality using ``==`` and ``hashCode``.
