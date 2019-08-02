@@ -4,7 +4,7 @@ import 'package:flutter/foundation.dart';
 
 /// To work correctly, [property] must implement `operator==` and `hashCode`.
 class PropertyChangeNotifier extends ChangeNotifier {
-  final _propertyListeners = Map<dynamic, ObserverList<VoidCallback>>();
+  final _propertyListeners = <dynamic, ObserverList<VoidCallback>>{};
 
   @override
   bool get hasListeners {
@@ -15,19 +15,19 @@ class PropertyChangeNotifier extends ChangeNotifier {
   void addListener(VoidCallback listener, [List<Object> properties]) {
     assert(listener != null);
 
-    // No properties provided, register global listener
+    // If no properties provided, register global listener
     if (properties == null) {
       super.addListener(listener);
       return;
     }
 
     for (final property in properties) {
-      // Property has no listeners yet; create map entry
+      // If property has no listeners yet; create map entry
       if (!_propertyListeners.containsKey(property)) {
         _propertyListeners[property] = ObserverList<VoidCallback>();
       }
 
-      // Listener already registered
+      // If listener already registered for this property, throw
       if (_propertyListeners[property].contains(listener)) {
         throw(Exception('Listener already registered for $property.'));
       }
@@ -40,14 +40,14 @@ class PropertyChangeNotifier extends ChangeNotifier {
   void removeListener(VoidCallback listener, [List<Object> properties]) {
     assert(listener != null);
 
-    // No properties provided; remove global listener.
+    // If no properties provided, remove global listener.
     if (properties == null) {
       super.removeListener(listener);
       return;
     }
 
     for (final property in properties) {
-      // No map entry exists for property
+      // If no map entry exists for property, exit
       if (!_propertyListeners.containsKey(property)) {
         return;
       }
@@ -70,12 +70,12 @@ class PropertyChangeNotifier extends ChangeNotifier {
     // Always notify global listeners
     super.notifyListeners();
 
-    // No property provided
+    // If no property provided, exit
     if (property == null) {
       return;
     }
 
-    // No listeners for this property
+    // If no listeners for this property, exit
     if (!_propertyListeners.containsKey(property)) {
       return;
     }
