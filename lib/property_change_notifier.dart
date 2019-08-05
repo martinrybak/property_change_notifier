@@ -15,7 +15,7 @@ class PropertyChangeNotifier extends ChangeNotifier {
   void addListener(VoidCallback listener, [List<Object> properties]) {
     assert(listener != null);
 
-    // If no properties provided, register global listener
+    // If no properties provided, register global listener only
     if (properties == null) {
       super.addListener(listener);
       return;
@@ -40,7 +40,7 @@ class PropertyChangeNotifier extends ChangeNotifier {
   void removeListener(VoidCallback listener, [List<Object> properties]) {
     assert(listener != null);
 
-    // If no properties provided, remove global listener.
+    // If no properties provided, remove global listener only
     if (properties == null) {
       super.removeListener(listener);
       return;
