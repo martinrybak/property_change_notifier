@@ -52,20 +52,20 @@ final model = Foo();
 model.addListener(_listener, ['bar']);
 
 void _listener() {
-  ...
+  print('bar was changed');
 }
 
 ```
 
 ### Listen to multiple properties
-Create a listener with a callback and an `Iterable` containing the property names you wish to observe:
+Create a listener with a callback and an `Iterable` containing the property names you wish to observe. If the listener accepts a property parameter, the property that changed will be provided. 
 
 ```
 final model = Foo();
 model.addListener(_listener, ['bar', 'baz']);
 
-void _listener() {
-  ...
+void _listener(String property) {
+  print('$property was changed');
 }
 
 ```
@@ -78,7 +78,7 @@ final model = Foo();
 model.addListener(_listener);
 
 void _listener() {
-  ...
+  print('model was changed');
 }
 
 ```
@@ -111,37 +111,25 @@ model.removeListener(_listener, ['bar', 'bah']);
 
 ```
 
-### Property names
+### String constants as property names
 
-Referring to properties by string is error-prone and results in [stringly-typed](https://www.techopedia.com/definition/31876/stringly-typed) code. To avoid this, you can create string constants:
+Referring to properties by string is error-prone and results in [stringly-typed](https://www.techopedia.com/definition/31876/stringly-typed) code. To avoid this, you can reference string constants in both your model and listeners so that they can be safely checked by the compiler:
 
 ```
+// Properties
 class FooProperties {
   static String get bar => 'bar';
   static String get baz => 'baz';
 }
-```
 
-Or you can even create an enum:
-
-```
-enum FooProperties {
-  bar,
-  baz,
-}
-```
-
-Now you can reference these values in both your model and listeners so that they can be safely checked by your compiler:
-
-```
 // Model
 class Foo extends PropertyChangeNotifier {
-  ...
+  …
   void set bar(String value) {
     _bar = value;
     notifyListeners(FooProperties.bar);
   }
-  ...
+  …
 }
 
 // Listener
@@ -149,7 +137,33 @@ final model = Foo();
 model.addListener(_listener, [FooProperties.bar]);
 ```
 
-You can even use your own custom types as property names. They just must extend [Object](https://api.dartlang.org/stable/2.4.0/dart-core/Object-class.html) and correctly implement equality using ``==`` and ``hashCode``.
+### Enum values as property names
+
+It might be more convenient to use enum values for property names. For added type safety, it is recommended to pass the property type as a generic argument to the `PropertyChangeNotifier` declaration.
+
+```
+// Properties
+enum FooProperties {
+  bar,
+  baz,
+}
+
+// Model
+class Foo extends PropertyChangeNotifier<FooProperties> {
+  …
+  void set bar(FooProperties value) {
+    _bar = value;
+    notifyListeners(FooProperties.bar);
+  }
+  …
+}
+
+// Listener
+final model = Foo();
+model.addListener(_listener, [FooProperties.bar]);
+```
+
+You can even use your own custom types as property names. They just must extend [Object](https://api.dartlang.org/stable/2.4.0/dart-core/Object-class.html) and correctly implement equality using ``==`` and ``hashCode``. 
 
 ## Unit Tests
 
