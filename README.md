@@ -2,7 +2,7 @@
 
 A drop-in replacement for [ChangeNotifier](https://api.flutter.dev/flutter/foundation/ChangeNotifier-class.html) that lets listeners observe only certain properties of a model.
 
-![](/Users/martin/Projects/property_change_notifier/screenshot.png)
+![](screenshot.png)
 
 ## Why?
 
