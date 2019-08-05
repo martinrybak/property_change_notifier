@@ -19,6 +19,7 @@ class PropertyChangeNotifier extends ChangeNotifier {
   }
 
   @override
+  @protected
   bool get hasListeners {
     assert(_debugAssertNotDisposed());
     return super.hasListeners || _propertyListeners.isNotEmpty;
@@ -79,6 +80,7 @@ class PropertyChangeNotifier extends ChangeNotifier {
   }
 
   @override
+  @mustCallSuper
   void dispose() {
     assert(_debugAssertNotDisposed());
     _propertyListeners = null;
@@ -86,6 +88,7 @@ class PropertyChangeNotifier extends ChangeNotifier {
   }
 
   @override
+  @protected
   void notifyListeners([Object property]) {
     assert(_debugAssertNotDisposed());
     assert(!(property is Iterable), 'notifyListeners() should only be called for one property at a time');
