@@ -45,7 +45,7 @@ class Foo extends PropertyChangeNotifier {
 ```
 
 ### Listen to a single property only
-Update existing listeners by passing in an additional parameter containing the property name you wish to observe, wrapped in a `List`:
+Update existing listeners by passing in an additional parameter containing the property name you wish to observe, wrapped in an [Iterable](https://api.dartlang.org/stable/2.4.0/dart-core/Iterable-class.html) (typically a [List](https://api.dartlang.org/stable/2.4.0/dart-core/List-class.html)):
 
 ```
 final model = Foo();
@@ -58,7 +58,7 @@ void _listener() {
 ```
 
 ### Listen to multiple properties
-Create a listener with a callback and a `List` containing the property names you wish to observe:
+Create a listener with a callback and an `Iterable` containing the property names you wish to observe:
 
 ```
 final model = Foo();

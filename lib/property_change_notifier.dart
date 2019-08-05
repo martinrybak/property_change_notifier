@@ -12,7 +12,7 @@ class PropertyChangeNotifier extends ChangeNotifier {
   }
 
   @override
-  void addListener(VoidCallback listener, [List<Object> properties]) {
+  void addListener(VoidCallback listener, [Iterable<Object> properties]) {
     assert(listener != null);
 
     // If no properties provided, register global listener only
@@ -37,7 +37,7 @@ class PropertyChangeNotifier extends ChangeNotifier {
   }
 
   @override
-  void removeListener(VoidCallback listener, [List<Object> properties]) {
+  void removeListener(VoidCallback listener, [Iterable<Object> properties]) {
     assert(listener != null);
 
     // If no properties provided, remove global listener only
