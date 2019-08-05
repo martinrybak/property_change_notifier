@@ -12,12 +12,17 @@ A drop-in replacement for [ChangeNotifier](https://api.flutter.dev/flutter/found
 
 ## How?
 
-`PropertyChangeNotifier` works by extending [ChangeNotifier](https://api.flutter.dev/flutter/foundation/ChangeNotifier-class.html) in a way that makes it 100% backwards compatible with existing code. Just replace `ChangeNotifier` with `PropertyChangeNotifier` in your model. Update your model to include the property name when calling `notifyListeners()`. Existing listeners will continue to receive all property updates as before. When you are ready, you can update them to observe only one or more properties.
+`PropertyChangeNotifier` works by extending [ChangeNotifier](https://api.flutter.dev/flutter/foundation/ChangeNotifier-class.html) in a way that makes it 100% backwards compatible with existing code.
+
+1. Replace `ChangeNotifier` with `PropertyChangeNotifier` in your model.
+1. Update your model to include the property name when calling `notifyListeners()`.
+1. Existing listeners will continue to receive all property updates as before. Over time, update those listeners to only observe specific properties.
+
+You may even want to consider *starting* with `PropertyChangeNotifier` in your models so that you can be as coarse or fine-grained as you want.
 
 ## Usage
 
 ### Model implementation
-Change your model to inherit from `PropertyChangeNotifier`. Wherever `notifyListeners()` is called, add a parameter containing the name of your property.
 
 ```
 class Foo extends PropertyChangeNotifier {
