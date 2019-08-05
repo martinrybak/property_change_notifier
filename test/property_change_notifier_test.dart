@@ -16,7 +16,7 @@ void main() {
 
     test('returns true after adding a listener with properties', () {
       final model = PropertyChangeNotifier();
-      model.addListener((){}, ['bar']);
+      model.addListener((){}, ['foo']);
       expect(model.hasListeners, isTrue);
     });
 
@@ -31,8 +31,8 @@ void main() {
     test('returns false after adding and removing same listener with properties', () {
       final model = PropertyChangeNotifier();
       final listener = (){};
-      model.addListener(listener, ['bar']);
-      model.removeListener(listener, ['bar']);
+      model.addListener(listener, ['foo']);
+      model.removeListener(listener, ['foo']);
       expect(model.hasListeners, isFalse);
     });
   });
@@ -47,8 +47,8 @@ void main() {
       final model = PropertyChangeNotifier();
       final listener = (){};
       expect(() {
-        model.addListener(listener, ['bar']);
-        model.addListener(listener, ['bar']);
+        model.addListener(listener, ['foo']);
+        model.addListener(listener, ['foo']);
       }, throwsException);
     });
 
@@ -56,8 +56,8 @@ void main() {
       final model = PropertyChangeNotifier();
       final listener = (){};
       expect(() {
+        model.addListener(listener, ['foo']);
         model.addListener(listener, ['bar']);
-        model.addListener(listener, ['baz']);
       }, returnsNormally);
     });
   });
@@ -75,7 +75,7 @@ void main() {
 
     test('non-existent listener with properties returns normally', () {
       final model = PropertyChangeNotifier();
-      expect(() => model.removeListener((){}, ['bar']), returnsNormally);
+      expect(() => model.removeListener((){}, ['foo']), returnsNormally);
     });
   });
 
@@ -91,7 +91,7 @@ void main() {
       final model = PropertyChangeNotifier();
       final listener = expectAsync0(() {}, count: 1);
       model.addListener(listener);
-      model.notifyListeners('bar');
+      model.notifyListeners('foo');
     });
   });
 
@@ -99,22 +99,22 @@ void main() {
     test('is not invoked once when notifyListeners() is invoked with no properties', () {
       final model = PropertyChangeNotifier();
       final listener = expectAsync0(() {}, count: 0);
-      model.addListener(listener, ['bar']);
+      model.addListener(listener, ['foo']);
       model.notifyListeners();
     });
 
     test('is invoked once when notifyListeners() is invoked with same property', () {
       final model = PropertyChangeNotifier();
       final listener = expectAsync0(() {}, count: 1);
-      model.addListener(listener, ['bar']);
-      model.notifyListeners('bar');
+      model.addListener(listener, ['foo']);
+      model.notifyListeners('foo');
     });
 
     test('is not invoked when notifyListeners() is invoked with different property', () {
       final model = PropertyChangeNotifier();
       final listener = expectAsync0(() {}, count: 0);
-      model.addListener(listener, ['bar']);
-      model.notifyListeners('baz');
+      model.addListener(listener, ['foo']);
+      model.notifyListeners('bar');
     });
   });
 
@@ -122,22 +122,22 @@ void main() {
     test('is not invoked once when notifyListeners() is invoked with no properties', () {
       final model = PropertyChangeNotifier();
       final listener = expectAsync0(() {}, count: 0);
-      model.addListener(listener, ['bar', 'baz']);
+      model.addListener(listener, ['foo', 'bar']);
       model.notifyListeners();
     });
 
     test('is invoked once when notifyListeners() is invoked with matching property', () {
       final model = PropertyChangeNotifier();
       final listener = expectAsync0(() {}, count: 1);
-      model.addListener(listener, ['bar', 'baz']);
-      model.notifyListeners('bar');
+      model.addListener(listener, ['foo', 'bar']);
+      model.notifyListeners('foo');
     });
 
     test('is not invoked when notifyListeners() is invoked with different property', () {
       final model = PropertyChangeNotifier();
       final listener = expectAsync0(() {}, count: 0);
-      model.addListener(listener, ['bar', 'baz']);
-      model.notifyListeners('foo');
+      model.addListener(listener, ['foo', 'bar']);
+      model.notifyListeners('baz');
     });
   });
 }
