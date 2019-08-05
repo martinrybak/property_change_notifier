@@ -35,9 +35,21 @@ void main() {
       model.removeListener(listener, ['foo']);
       expect(model.hasListeners, isFalse);
     });
+
+    test('invoking after dispose() throws assertion', () {
+      final model = PropertyChangeNotifier();
+      model.dispose();
+      expect(() => model.hasListeners, throwsAssertionError);
+    });
   });
 
   group('addListener()', () {
+    test('invoking after dispose() throws assertion', () {
+      final model = PropertyChangeNotifier();
+      model.dispose();
+      expect(() => model.addListener(null), throwsAssertionError);
+    });
+
     test('null listener throws assertion', () {
       final model = PropertyChangeNotifier();
       expect(() => model.addListener(null), throwsAssertionError);
@@ -63,6 +75,12 @@ void main() {
   });
 
   group('removeListener()', () {
+    test('invoking after dispose() throws assertion', () {
+      final model = PropertyChangeNotifier();
+      model.dispose();
+      expect(() => model.removeListener(null), throwsAssertionError);
+    });
+
     test('null listener throws assertion', () {
       final model = PropertyChangeNotifier();
       expect(() => model.removeListener(null), throwsAssertionError);
@@ -80,6 +98,12 @@ void main() {
   });
 
   group('notifyListeners()', () {
+    test('invoking after dispose() throws assertion', () {
+      final model = PropertyChangeNotifier();
+      model.dispose();
+      expect(() => model.notifyListeners(null), throwsAssertionError);
+    });
+
     test('invoking with List throws assertion', () {
       final model = PropertyChangeNotifier();
       model.notifyListeners();

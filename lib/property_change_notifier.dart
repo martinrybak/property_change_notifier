@@ -4,15 +4,29 @@ import 'package:flutter/foundation.dart';
 
 /// To work correctly, [property] must implement `operator==` and `hashCode`.
 class PropertyChangeNotifier extends ChangeNotifier {
-  final _propertyListeners = <dynamic, ObserverList<VoidCallback>>{};
+  var _propertyListeners = <dynamic, ObserverList<VoidCallback>>{};
+
+  // Reimplemented from [ChangeNotifier].
+  bool _debugAssertNotDisposed() {
+    assert(() {
+      if (_propertyListeners == null) {
+        throw FlutterError('A $runtimeType was used after being disposed.\n'
+            'Once you have called dispose() on a $runtimeType, it can no longer be used.');
+      }
+      return true;
+    }());
+    return true;
+  }
 
   @override
   bool get hasListeners {
+    assert(_debugAssertNotDisposed());
     return super.hasListeners || _propertyListeners.isNotEmpty;
   }
 
   @override
   void addListener(VoidCallback listener, [Iterable<Object> properties]) {
+    assert(_debugAssertNotDisposed());
     assert(listener != null);
 
     // If no properties provided, register global listener only
@@ -38,6 +52,7 @@ class PropertyChangeNotifier extends ChangeNotifier {
 
   @override
   void removeListener(VoidCallback listener, [Iterable<Object> properties]) {
+    assert(_debugAssertNotDisposed());
     assert(listener != null);
 
     // If no properties provided, remove global listener only
@@ -64,7 +79,15 @@ class PropertyChangeNotifier extends ChangeNotifier {
   }
 
   @override
+  void dispose() {
+    assert(_debugAssertNotDisposed());
+    _propertyListeners = null;
+    super.dispose();
+  }
+
+  @override
   void notifyListeners([Object property]) {
+    assert(_debugAssertNotDisposed());
     assert(!(property is Iterable), 'notifyListeners() should only be called for one property at a time');
 
     // Always notify global listeners
