@@ -10,19 +10,19 @@ void main() {
 
     test('returns true after adding a listener with no properties', () {
       final model = PropertyChangeNotifier();
-      model.addListener((){});
+      model.addListener(() {});
       expect(model.hasListeners, isTrue);
     });
 
     test('returns true after adding a listener with properties', () {
       final model = PropertyChangeNotifier();
-      model.addListener((){}, ['foo']);
+      model.addListener(() {}, ['foo']);
       expect(model.hasListeners, isTrue);
     });
 
     test('returns false after adding and removing same listener with no properties', () {
       final model = PropertyChangeNotifier();
-      final listener = (){};
+      final listener = () {};
       model.addListener(listener);
       model.removeListener(listener);
       expect(model.hasListeners, isFalse);
@@ -30,7 +30,7 @@ void main() {
 
     test('returns false after adding and removing same listener with properties', () {
       final model = PropertyChangeNotifier();
-      final listener = (){};
+      final listener = () {};
       model.addListener(listener, ['foo']);
       model.removeListener(listener, ['foo']);
       expect(model.hasListeners, isFalse);
@@ -45,7 +45,7 @@ void main() {
 
     test('adding same listener with same properties throws exception', () {
       final model = PropertyChangeNotifier();
-      final listener = (){};
+      final listener = () {};
       expect(() {
         model.addListener(listener, ['foo']);
         model.addListener(listener, ['foo']);
@@ -54,7 +54,7 @@ void main() {
 
     test('adding same listener with different properties returns normally', () {
       final model = PropertyChangeNotifier();
-      final listener = (){};
+      final listener = () {};
       expect(() {
         model.addListener(listener, ['foo']);
         model.addListener(listener, ['bar']);
@@ -70,12 +70,12 @@ void main() {
 
     test('non-existent listener with no properties returns normally', () {
       final model = PropertyChangeNotifier();
-      expect(() => model.removeListener((){}), returnsNormally);
+      expect(() => model.removeListener(() {}), returnsNormally);
     });
 
     test('non-existent listener with properties returns normally', () {
       final model = PropertyChangeNotifier();
-      expect(() => model.removeListener((){}, ['foo']), returnsNormally);
+      expect(() => model.removeListener(() {}, ['foo']), returnsNormally);
     });
   });
 

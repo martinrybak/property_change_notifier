@@ -29,7 +29,7 @@ class PropertyChangeNotifier extends ChangeNotifier {
 
       // If listener already registered for this property, throw
       if (_propertyListeners[property].contains(listener)) {
-        throw(Exception('Listener already registered for $property.'));
+        throw (Exception('Listener already registered for $property.'));
       }
 
       _propertyListeners[property].add(listener);
