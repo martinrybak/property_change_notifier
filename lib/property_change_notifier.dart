@@ -3,8 +3,8 @@ library property_change_notifier;
 import 'package:flutter/foundation.dart';
 
 /// To work correctly, [property] must implement `operator==` and `hashCode`.
-class PropertyChangeNotifier extends ChangeNotifier {
-  var _propertyListeners = <dynamic, ObserverList<VoidCallback>>{};
+class PropertyChangeNotifier<T extends Object> extends ChangeNotifier {
+  var _propertyListeners = <dynamic, ObserverList<Function>>{};
 
   // Reimplemented from [ChangeNotifier].
   bool _debugAssertNotDisposed() {
@@ -20,13 +20,14 @@ class PropertyChangeNotifier extends ChangeNotifier {
 
   @override
   @protected
+  @visibleForTesting
   bool get hasListeners {
     assert(_debugAssertNotDisposed());
     return super.hasListeners || _propertyListeners.isNotEmpty;
   }
 
   @override
-  void addListener(VoidCallback listener, [Iterable<Object> properties]) {
+  void addListener(Function listener, [Iterable<T> properties]) {
     assert(_debugAssertNotDisposed());
     assert(listener != null);
 
@@ -39,7 +40,7 @@ class PropertyChangeNotifier extends ChangeNotifier {
     for (final property in properties) {
       // If property has no listeners yet; create map entry
       if (!_propertyListeners.containsKey(property)) {
-        _propertyListeners[property] = ObserverList<VoidCallback>();
+        _propertyListeners[property] = ObserverList<Function>();
       }
 
       // If listener already registered for this property, throw
@@ -52,7 +53,7 @@ class PropertyChangeNotifier extends ChangeNotifier {
   }
 
   @override
-  void removeListener(VoidCallback listener, [Iterable<Object> properties]) {
+  void removeListener(Function listener, [Iterable<T> properties]) {
     assert(_debugAssertNotDisposed());
     assert(listener != null);
 
@@ -89,7 +90,8 @@ class PropertyChangeNotifier extends ChangeNotifier {
 
   @override
   @protected
-  void notifyListeners([Object property]) {
+  @visibleForTesting
+  void notifyListeners([T property]) {
     assert(_debugAssertNotDisposed());
     assert(!(property is Iterable), 'notifyListeners() should only be called for one property at a time');
 
@@ -109,13 +111,19 @@ class PropertyChangeNotifier extends ChangeNotifier {
     // Create a local copy of _propertyListeners in case a callback calls
     // [addListener] or [removeListener] while we are iterating through the list.
     final currentListeners = _propertyListeners[property];
-    final localListeners = List<VoidCallback>.from(currentListeners);
+    final localListeners = List<Function>.from(currentListeners);
 
     for (final listener in localListeners) {
       // One last check to make sure the listener hasn't been removed
       // from the original list since the time we made our local copy.
       if (currentListeners.contains(listener)) {
-        listener();
+        // If the listener accepts the property as a parameter, provide it.
+        // Otherwise just invoke the listener.
+        if (listener is Function(T property)) {
+          listener(property);
+        } else {
+          listener();
+        }
       }
     }
   }
