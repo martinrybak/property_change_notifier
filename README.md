@@ -145,3 +145,7 @@ model.addListener(_listener, [FooProperties.bar, FooProperties.baz]);
 ```
 
 You can even use your own custom types as property names. They just must extend [Object](https://api.dartlang.org/stable/2.4.0/dart-core/Object-class.html) and correctly implement equality using ``==`` and ``hashCode``.
+
+## Unit Tests
+
+This library has 100% [test coverage](coverage/index.html) and uses the underlying [ChangeNotifier](https://api.flutter.dev/flutter/foundation/ChangeNotifier-class.html) implementation as much as possible.
