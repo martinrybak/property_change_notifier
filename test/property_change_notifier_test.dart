@@ -65,7 +65,7 @@ void main() {
   group('removeListener()', () {
     test('null listener throws assertion', () {
       final model = PropertyChangeNotifier();
-      expect(() => model.addListener(null), throwsAssertionError);
+      expect(() => model.removeListener(null), throwsAssertionError);
     });
 
     test('non-existent listener with no properties returns normally', () {
