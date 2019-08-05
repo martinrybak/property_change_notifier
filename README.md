@@ -66,7 +66,7 @@ void _listener() {
 ```
 
 ### Listen to all properties
-This is the current behavior of `ChangeNotifier` and is not affected, even if you've update your model to invoke `notifyListeners()` with a property name.
+This is the default behavior of `ChangeNotifier` and is not affected, even if you've update your model to invoke `notifyListeners()` with a property name.
 
 ```
 final model = Foo();
@@ -79,7 +79,7 @@ void _listener() {
 ```
 
 ### Adding listeners
-Listeners can be added at any time. A listener cannot be `null`. Adding a listener with no parameters makes it listen to all properties. The same listener can be added to multiple properties. The same listener *cannot* be added multiple times to the same property. It doesn't hurt to add a listener to a non-existent property, but it serves no purpose. `PropertyChangeNotifier` does not check if the property actually exists. 
+Listeners can be added at any time. A listener cannot be `null`. Adding a listener with no parameters causes it to listen to all properties. The same listener can be added to multiple properties. The same listener *cannot* be added multiple times to the same property. It doesn't hurt to add a listener to a non-existent property, but it serves no purpose. `PropertyChangeNotifier` does not check if the property actually exists. 
 
 ```
 final model = Foo();
@@ -102,7 +102,7 @@ final model = Foo();
 model.addListener(_listener, ['bar', 'baz', 'bah']);
 model.removeListener(_listener, ['bar', 'bah']);
 
-// _listener is listening to baz only.
+// _listener is now listening to baz only.
 
 ```
 
@@ -141,7 +141,7 @@ class Foo extends PropertyChangeNotifier {
 
 // Listener
 final model = Foo();
-model.addListener(_listener, [FooProperties.bar, FooProperties.baz]);
+model.addListener(_listener, [FooProperties.bar]);
 ```
 
 You can even use your own custom types as property names. They just must extend [Object](https://api.dartlang.org/stable/2.4.0/dart-core/Object-class.html) and correctly implement equality using ``==`` and ``hashCode``.
