@@ -16,7 +16,7 @@ A drop-in replacement for [ChangeNotifier](https://api.flutter.dev/flutter/found
 
 1. Replace `ChangeNotifier` with `PropertyChangeNotifier` in your model.
 1. Update your model to include the property name when calling `notifyListeners()`.
-1. Existing listeners will continue to receive all property updates as before. Over time, update those listeners to only observe specific properties.
+1. Existing listeners continue to receive all property updates just as before. Over time, update those listeners to only observe specific properties.
 
 You may even want to consider *starting* with `PropertyChangeNotifier` in your models so that you can be as coarse or fine-grained as you want.
 
@@ -44,8 +44,8 @@ class Foo extends PropertyChangeNotifier {
 }
 ```
 
-### Listen to a single property only
-Update existing listeners by passing in an additional parameter containing the property name you wish to observe, wrapped in an [Iterable](https://api.dartlang.org/stable/2.4.0/dart-core/Iterable-class.html) (typically a [List](https://api.dartlang.org/stable/2.4.0/dart-core/List-class.html)):
+### Listening to a single property
+When creating a listener, provide an additional parameter containing the property name you wish to observe, wrapped in an [Iterable](https://api.dartlang.org/stable/2.4.0/dart-core/Iterable-class.html) (typically a [List](https://api.dartlang.org/stable/2.4.0/dart-core/List-class.html)):
 
 ```
 final model = Foo();
@@ -57,8 +57,8 @@ void _listener() {
 
 ```
 
-### Listen to multiple properties
-Create a listener with a callback and an `Iterable` containing the property names you wish to observe. If the listener accepts a property parameter, the property that changed will be provided. 
+### Listening to multiple properties
+Create a listener with an additional parameter containing the property names you wish to observe. The listener will be invoked when any of the properties change. If the listener accepts a property parameter, it will be provided the name of the property that changed. 
 
 ```
 final model = Foo();
@@ -70,8 +70,8 @@ void _listener(String property) {
 
 ```
 
-### Listen to all properties
-This is the default behavior of `ChangeNotifier` and is not affected, even if you've update your model to invoke `notifyListeners()` with a property name.
+### Listening to all properties
+This is the default behavior of `ChangeNotifier` and remains the same, even if you've update your model to invoke `notifyListeners()` with a property name.
 
 ```
 final model = Foo();
@@ -113,7 +113,7 @@ model.removeListener(_listener, ['bar', 'bah']);
 
 ### String constants as property names
 
-Referring to properties by string is error-prone and results in [stringly-typed](https://www.techopedia.com/definition/31876/stringly-typed) code. To avoid this, you can reference string constants in both your model and listeners so that they can be safely checked by the compiler:
+Referring to properties by string is error-prone and leads to [stringly-typed](https://www.techopedia.com/definition/31876/stringly-typed) code. To avoid this, you can reference string constants in both your model and listeners so that they can be safely checked by the compiler:
 
 ```
 // Properties
