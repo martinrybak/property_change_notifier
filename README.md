@@ -117,7 +117,7 @@ Referring to properties by string is error-prone and leads to [stringly-typed](h
 
 ```
 // Properties
-class FooProperties {
+abstract class FooProperties {
   static String get bar => 'bar';
   static String get baz => 'baz';
 }
