@@ -39,7 +39,7 @@ class _MyAppState extends State<MyApp> {
         primarySwatch: Colors.blue,
       ),
       home: Scaffold(
-        body: Observer(
+        body: Observer<Model, String>(
           model: _model,
           child: Foo(),
         ),
@@ -67,7 +67,7 @@ class Foo extends StatelessWidget {
 class NotListener extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
-    final model = Observer.of(context, listen: false);
+    final model = Observer.of<Model, String>(context, listen: false);
     return Text(DateTime.now().toIso8601String());
   }
 }
@@ -75,7 +75,7 @@ class NotListener extends StatelessWidget {
 class GlobalListener extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
-    final model = Observer.of(context);
+    final model = Observer.of<Model, String>(context);
     return Text(DateTime.now().toIso8601String());
   }
 }
@@ -83,7 +83,7 @@ class GlobalListener extends StatelessWidget {
 class MultiListener extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
-    final model = Observer.of(context, properties: ['bar', 'baz']);
+    final model = Observer.of<Model, String>(context, properties: ['bar', 'baz']);
     return Text(DateTime.now().toIso8601String());
   }
 }
@@ -91,7 +91,7 @@ class MultiListener extends StatelessWidget {
 class BarListener extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
-    final model = Observer.of(context, properties: ['bar']);
+    final model = Observer.of<Model, String>(context, properties: ['bar']);
     return RaisedButton(
       child: Text(model.bar),
       onPressed: () {
@@ -104,7 +104,7 @@ class BarListener extends StatelessWidget {
 class BazListener extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
-    final model = Observer.of(context, properties: ['baz']);
+    final model = Observer.of<Model, String>(context, properties: ['baz']);
     return RaisedButton(
       child: Text(model.baz),
       onPressed: () {
@@ -114,21 +114,24 @@ class BazListener extends StatelessWidget {
   }
 }
 
-class Observer extends StatefulWidget {
-  static Model of(BuildContext context, {Iterable<String> properties, bool listen = true}) {
+class Observer<T extends PropertyChangeNotifier<S>, S extends Object> extends StatefulWidget {
+  static Type _typeOf<T>() => T;
+
+  static T of<T extends PropertyChangeNotifier<S>, S extends Object>(BuildContext context, {Iterable<S> properties, bool listen = true}) {
     assert (listen || properties == null, "No need to provide properties if you're not going to listen to them.");
 
     if (!listen) {
-      return (context.ancestorWidgetOfExactType(ObservedModel) as ObservedModel).model;
+      final type = _typeOf<ObservedModel<T, S>>();
+      return (context.ancestorWidgetOfExactType(type) as ObservedModel).model;
     }
 
     if (properties == null) {
-      return InheritedModel.inheritFrom<ObservedModel>(context).model;
+      return InheritedModel.inheritFrom<ObservedModel<T, S>>(context).model;
     }
 
     ObservedModel widget;
     for (final property in properties) {
-      widget = InheritedModel.inheritFrom<ObservedModel>(context, aspect: property);
+      widget = InheritedModel.inheritFrom<ObservedModel<T, S>>(context, aspect: property);
     }
     return widget.model;
   }
@@ -136,14 +139,14 @@ class Observer extends StatefulWidget {
   const Observer({Key key, this.model, this.child}) : super(key: key);
 
   final Widget child;
-  final PropertyChangeNotifier<String> model;
+  final T model;
 
   @override
-  _ObserverState createState() => _ObserverState();
+  _ObserverState createState() => _ObserverState<T, S>();
 }
 
-class _ObserverState extends State<Observer> {
-  String _changedProperty = 'foo';
+class _ObserverState<T extends PropertyChangeNotifier<S>, S extends Object> extends State<Observer> {
+  S _changedProperty;
 
   @override
   void initState() {
@@ -159,23 +162,23 @@ class _ObserverState extends State<Observer> {
 
   @override
   Widget build(BuildContext context) {
-    return ObservedModel(
+    return ObservedModel<T, S>(
       model: widget.model,
       changedProperty: _changedProperty,
       child: widget.child,
     );
   }
 
-  void _listener(String property) {
+  void _listener(S property) {
     setState(() {
       _changedProperty = property;
     });
   }
 }
 
-class ObservedModel extends InheritedModel<String> {
-  final Model model;
-  final String changedProperty;
+class ObservedModel<T extends PropertyChangeNotifier<S>, S extends Object> extends InheritedModel<String> {
+  final T model;
+  final S changedProperty;
 
   ObservedModel({
     Key key,
