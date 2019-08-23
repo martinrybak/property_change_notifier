@@ -107,12 +107,12 @@ class _MyInheritedState extends State<MyInherited> {
   @override
   void initState() {
     super.initState();
-    widget.model.addListener(_listener, ['bar', 'baz']);
+    widget.model.addListener(_listener);
   }
 
   @override
   void dispose() {
-    widget.model.removeListener(_listener, ['bar', 'baz']);
+    widget.model.removeListener(_listener);
     super.dispose();
   }
 
