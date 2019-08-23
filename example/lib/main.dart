@@ -125,7 +125,7 @@ class _MyInheritedState extends State<MyInherited> {
     );
   }
 
-  void _listener([String property]) {
+  void _listener(String property) {
     setState(() {
       _changedProperty = property;
     });
@@ -146,7 +146,6 @@ class MyInheritedData extends InheritedModel<String> {
   @override
   bool updateShouldNotify(MyInheritedData oldWidget) {
     return true;
-//    return oldWidget.model != this.model;
   }
 
   @override

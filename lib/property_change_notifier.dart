@@ -93,15 +93,15 @@ class PropertyChangeNotifier<T extends Object> extends ChangeNotifier {
       return;
     }
 
-    // If property is provided and listeners exist for this property, notify them.
-    if (property != null && _propertyListeners.containsKey(property)) {
+    // If listeners exist for this property, notify them.
+    if (_propertyListeners.containsKey(property)) {
       _notifyListeners(_propertyListeners[property], property);
     }
   }
 
-  // Creates a local copy of [listeners] in case a callback calls
-  // [addListener] or [removeListener] while iterating through the list.
-  // Invokes each listener. If the listener accepts a property parameter, it will be provided.
+  /// Creates a local copy of [listeners] in case a callback calls
+  /// [addListener] or [removeListener] while iterating through the list.
+  /// Invokes each listener. If the listener accepts a property parameter, it will be provided.
   void _notifyListeners(ObserverList<Function> listeners, T property) {
     final localListeners = List<Function>.from(listeners);
     for (final listener in localListeners) {
@@ -117,7 +117,7 @@ class PropertyChangeNotifier<T extends Object> extends ChangeNotifier {
     }
   }
 
-  // Reimplemented from [ChangeNotifier].
+  /// Reimplemented from [ChangeNotifier].
   bool _debugAssertNotDisposed() {
     assert(() {
       if (_globalListeners == null || _propertyListeners == null) {
