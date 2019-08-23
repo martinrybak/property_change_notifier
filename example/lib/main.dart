@@ -3,7 +3,34 @@ import 'package:property_change_notifier/property_change_notifier.dart';
 
 void main() => runApp(MyApp());
 
-class MyApp extends StatelessWidget {
+class Model extends PropertyChangeNotifier<String> {
+  String _bar;
+  String _baz;
+
+  String get bar => _bar;
+  String get baz => _baz;
+
+  set bar(String value) {
+    _bar = value;
+    notifyListeners('bar');
+  }
+
+  set baz(String value) {
+    _baz = value;
+    notifyListeners('baz');
+  }
+}
+
+class MyApp extends StatefulWidget {
+  @override
+  _MyAppState createState() => _MyAppState();
+}
+
+class _MyAppState extends State<MyApp> {
+  final _model = Model()
+    ..bar = 'Bar'
+    ..baz = 'Baz';
+
   @override
   Widget build(BuildContext context) {
     return MaterialApp(
@@ -12,9 +39,11 @@ class MyApp extends StatelessWidget {
         primarySwatch: Colors.blue,
       ),
       home: Scaffold(
-          body: MyInherited(
-        child: Foo(),
-      )),
+        body: MyInherited(
+          model: _model,
+          child: Foo(),
+        ),
+      ),
     );
   }
 }
@@ -22,73 +51,106 @@ class MyApp extends StatelessWidget {
 class Foo extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
-    return Center(child: Bar());
+    return Center(child: Column(
+      mainAxisSize: MainAxisSize.min,
+      children: <Widget>[
+        BarListener(),
+        BazListener(),
+      ],
+    ));
   }
 }
 
-class Bar extends StatelessWidget {
+class BarListener extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
-    final model = MyInherited.of(context, 'a');
+    final model = MyInherited.of(context, 'bar');
     return RaisedButton(
-      child: Text(model.myField),
+      child: Text(model.bar),
       onPressed: () {
-        model.onMyFieldChange(DateTime.now().toIso8601String());
+        model.bar = DateTime.now().toIso8601String();
+      },
+    );
+  }
+}
+
+class BazListener extends StatelessWidget {
+  @override
+  Widget build(BuildContext context) {
+    final model = MyInherited.of(context, 'baz');
+    return RaisedButton(
+      child: Text(model.baz),
+      onPressed: () {
+        model.baz = DateTime.now().toIso8601String();
       },
     );
   }
 }
 
 class MyInherited extends StatefulWidget {
-  static MyInheritedData of(BuildContext context, String aspect) {
-    return InheritedModel.inheritFrom<MyInheritedData>(context, aspect: aspect);
+  static Model of(BuildContext context, String aspect) {
+    return InheritedModel.inheritFrom<MyInheritedData>(context, aspect: aspect).model;
   }
 
-  const MyInherited({Key key, this.child}) : super(key: key);
+  const MyInherited({Key key, this.model, this.child}) : super(key: key);
 
   final Widget child;
+  final PropertyChangeNotifier<String> model;
 
   @override
   _MyInheritedState createState() => _MyInheritedState();
 }
 
 class _MyInheritedState extends State<MyInherited> {
-  String myField = 'foo';
+  String _changedProperty = 'foo';
 
-  void onMyFieldChange(String newValue) {
-    setState(() {
-      myField = newValue;
-    });
+  @override
+  void initState() {
+    super.initState();
+    widget.model.addListener(_listener, ['bar', 'baz']);
+  }
+
+  @override
+  void dispose() {
+    widget.model.removeListener(_listener, ['bar', 'baz']);
+    super.dispose();
   }
 
   @override
   Widget build(BuildContext context) {
     return MyInheritedData(
-      myField: myField,
-      onMyFieldChange: onMyFieldChange,
+      model: widget.model,
+      changedProperty: _changedProperty,
       child: widget.child,
     );
+  }
+
+  void _listener([String property]) {
+    setState(() {
+      _changedProperty = property;
+    });
   }
 }
 
 class MyInheritedData extends InheritedModel<String> {
-  final String myField;
-  final ValueChanged<String> onMyFieldChange;
+  final Model model;
+  final String changedProperty;
 
   MyInheritedData({
     Key key,
-    this.myField,
-    this.onMyFieldChange,
+    this.model,
+    this.changedProperty,
     Widget child,
   }) : super(key: key, child: child);
 
   @override
   bool updateShouldNotify(MyInheritedData oldWidget) {
-    return oldWidget.myField != myField || oldWidget.onMyFieldChange != onMyFieldChange;
+    return true;
+//    return oldWidget.model != this.model;
   }
 
   @override
   bool updateShouldNotifyDependent(MyInheritedData oldWidget, Set<String> aspects) {
-    return aspects.contains('a');
+    return aspects.contains(this.changedProperty);
   }
 }
