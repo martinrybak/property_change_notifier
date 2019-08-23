@@ -9,18 +9,23 @@ class Observer<T extends PropertyChangeNotifier<S>, S extends Object> extends St
 
     if (!listen) {
       final type = _typeOf<ObservedModel<T, S>>();
-      return (context.ancestorWidgetOfExactType(type) as ObservedModel).model;
+      return _getModel(context.ancestorWidgetOfExactType(type) as ObservedModel);
     }
 
     if (properties == null) {
-      return InheritedModel.inheritFrom<ObservedModel<T, S>>(context).model;
+      return _getModel(InheritedModel.inheritFrom<ObservedModel<T, S>>(context));
     }
 
     ObservedModel widget;
     for (final property in properties) {
       widget = InheritedModel.inheritFrom<ObservedModel<T, S>>(context, aspect: property);
     }
-    return widget.model;
+    return _getModel(widget);
+  }
+
+  static T _getModel<T extends PropertyChangeNotifier<S>, S extends Object>(ObservedModel<T, S> model) {
+    assert(model != null, 'Could not find an ancestor Observer<$T, $S>');
+    return model.model;
   }
 
   const Observer({Key key, this.model, this.child}) : super(key: key);
