@@ -39,7 +39,7 @@ class _MyAppState extends State<MyApp> {
         primarySwatch: Colors.blue,
       ),
       home: Scaffold(
-        body: MyInherited(
+        body: Observer(
           model: _model,
           child: Foo(),
         ),
@@ -67,7 +67,7 @@ class Foo extends StatelessWidget {
 class NotListener extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
-    final model = MyInherited.of(context, listen: false);
+    final model = Observer.of(context, listen: false);
     return Text(DateTime.now().toIso8601String());
   }
 }
@@ -75,7 +75,7 @@ class NotListener extends StatelessWidget {
 class GlobalListener extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
-    final model = MyInherited.of(context);
+    final model = Observer.of(context);
     return Text(DateTime.now().toIso8601String());
   }
 }
@@ -83,7 +83,7 @@ class GlobalListener extends StatelessWidget {
 class MultiListener extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
-    final model = MyInherited.of(context, properties: ['bar', 'baz']);
+    final model = Observer.of(context, properties: ['bar', 'baz']);
     return Text(DateTime.now().toIso8601String());
   }
 }
@@ -91,7 +91,7 @@ class MultiListener extends StatelessWidget {
 class BarListener extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
-    final model = MyInherited.of(context, properties: ['bar']);
+    final model = Observer.of(context, properties: ['bar']);
     return RaisedButton(
       child: Text(model.bar),
       onPressed: () {
@@ -104,7 +104,7 @@ class BarListener extends StatelessWidget {
 class BazListener extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
-    final model = MyInherited.of(context, properties: ['baz']);
+    final model = Observer.of(context, properties: ['baz']);
     return RaisedButton(
       child: Text(model.baz),
       onPressed: () {
@@ -114,35 +114,35 @@ class BazListener extends StatelessWidget {
   }
 }
 
-class MyInherited extends StatefulWidget {
+class Observer extends StatefulWidget {
   static Model of(BuildContext context, {Iterable<String> properties, bool listen = true}) {
     assert (listen || properties == null, "No need to provide properties if you're not going to listen to them.");
 
     if (!listen) {
-      return (context.ancestorWidgetOfExactType(MyInheritedData) as MyInheritedData).model;
+      return (context.ancestorWidgetOfExactType(ObservedModel) as ObservedModel).model;
     }
 
     if (properties == null) {
-      return InheritedModel.inheritFrom<MyInheritedData>(context).model;
+      return InheritedModel.inheritFrom<ObservedModel>(context).model;
     }
 
-    MyInheritedData widget;
+    ObservedModel widget;
     for (final property in properties) {
-      widget = InheritedModel.inheritFrom<MyInheritedData>(context, aspect: property);
+      widget = InheritedModel.inheritFrom<ObservedModel>(context, aspect: property);
     }
     return widget.model;
   }
 
-  const MyInherited({Key key, this.model, this.child}) : super(key: key);
+  const Observer({Key key, this.model, this.child}) : super(key: key);
 
   final Widget child;
   final PropertyChangeNotifier<String> model;
 
   @override
-  _MyInheritedState createState() => _MyInheritedState();
+  _ObserverState createState() => _ObserverState();
 }
 
-class _MyInheritedState extends State<MyInherited> {
+class _ObserverState extends State<Observer> {
   String _changedProperty = 'foo';
 
   @override
@@ -159,7 +159,7 @@ class _MyInheritedState extends State<MyInherited> {
 
   @override
   Widget build(BuildContext context) {
-    return MyInheritedData(
+    return ObservedModel(
       model: widget.model,
       changedProperty: _changedProperty,
       child: widget.child,
@@ -173,11 +173,11 @@ class _MyInheritedState extends State<MyInherited> {
   }
 }
 
-class MyInheritedData extends InheritedModel<String> {
+class ObservedModel extends InheritedModel<String> {
   final Model model;
   final String changedProperty;
 
-  MyInheritedData({
+  ObservedModel({
     Key key,
     this.model,
     this.changedProperty,
@@ -185,12 +185,12 @@ class MyInheritedData extends InheritedModel<String> {
   }) : super(key: key, child: child);
 
   @override
-  bool updateShouldNotify(MyInheritedData oldWidget) {
+  bool updateShouldNotify(ObservedModel oldWidget) {
     return true;
   }
 
   @override
-  bool updateShouldNotifyDependent(MyInheritedData oldWidget, Set<String> aspects) {
+  bool updateShouldNotifyDependent(ObservedModel oldWidget, Set<String> aspects) {
     return aspects.contains(this.changedProperty);
   }
 }
