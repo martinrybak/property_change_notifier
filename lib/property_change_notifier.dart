@@ -4,26 +4,15 @@ import 'package:flutter/foundation.dart';
 
 /// To work correctly, [property] must implement `operator==` and `hashCode`.
 class PropertyChangeNotifier<T extends Object> extends ChangeNotifier {
-  var _propertyListeners = <dynamic, ObserverList<Function>>{};
-
-  // Reimplemented from [ChangeNotifier].
-  bool _debugAssertNotDisposed() {
-    assert(() {
-      if (_propertyListeners == null) {
-        throw FlutterError('A $runtimeType was used after being disposed.\n'
-            'Once you have called dispose() on a $runtimeType, it can no longer be used.');
-      }
-      return true;
-    }());
-    return true;
-  }
+  var _globalListeners = ObserverList<Function>();
+  var _propertyListeners = <T, ObserverList<Function>>{};
 
   @override
   @protected
   @visibleForTesting
   bool get hasListeners {
     assert(_debugAssertNotDisposed());
-    return super.hasListeners || _propertyListeners.isNotEmpty;
+    return _globalListeners.isNotEmpty || _propertyListeners.isNotEmpty;
   }
 
   @override
@@ -33,7 +22,7 @@ class PropertyChangeNotifier<T extends Object> extends ChangeNotifier {
 
     // If no properties provided, register global listener only
     if (properties == null) {
-      super.addListener(listener);
+      _globalListeners.add(listener);
       return;
     }
 
@@ -43,9 +32,9 @@ class PropertyChangeNotifier<T extends Object> extends ChangeNotifier {
         _propertyListeners[property] = ObserverList<Function>();
       }
 
-      // If listener already registered for this property, throw
+      // If listener already registered for this property, ignore
       if (_propertyListeners[property].contains(listener)) {
-        throw (Exception('Listener already registered for $property.'));
+        continue;
       }
 
       _propertyListeners[property].add(listener);
@@ -59,7 +48,7 @@ class PropertyChangeNotifier<T extends Object> extends ChangeNotifier {
 
     // If no properties provided, remove global listener only
     if (properties == null) {
-      super.removeListener(listener);
+      _globalListeners.remove(listener);
       return;
     }
 
@@ -84,6 +73,7 @@ class PropertyChangeNotifier<T extends Object> extends ChangeNotifier {
   @mustCallSuper
   void dispose() {
     assert(_debugAssertNotDisposed());
+    _globalListeners = null;
     _propertyListeners = null;
     super.dispose();
   }
@@ -96,29 +86,28 @@ class PropertyChangeNotifier<T extends Object> extends ChangeNotifier {
     assert(!(property is Iterable), 'notifyListeners() should only be called for one property at a time');
 
     // Always notify global listeners
-    super.notifyListeners();
+    _notifyListeners(_globalListeners, property);
 
     // If no property provided, exit
     if (property == null) {
       return;
     }
 
-    // If no listeners for this property, exit
-    if (!_propertyListeners.containsKey(property)) {
-      return;
+    // If property is provided and listeners exist for this property, notify them.
+    if (property != null && _propertyListeners.containsKey(property)) {
+      _notifyListeners(_propertyListeners[property], property);
     }
+  }
 
-    // Create a local copy of _propertyListeners in case a callback calls
-    // [addListener] or [removeListener] while we are iterating through the list.
-    final currentListeners = _propertyListeners[property];
-    final localListeners = List<Function>.from(currentListeners);
-
+  // Creates a local copy of [listeners] in case a callback calls
+  // [addListener] or [removeListener] while iterating through the list.
+  // Invokes each listener. If the listener accepts a property parameter, it will be provided.
+  void _notifyListeners(ObserverList<Function> listeners, T property) {
+    final localListeners = List<Function>.from(listeners);
     for (final listener in localListeners) {
       // One last check to make sure the listener hasn't been removed
       // from the original list since the time we made our local copy.
-      if (currentListeners.contains(listener)) {
-        // If the listener accepts the property as a parameter, provide it.
-        // Otherwise just invoke the listener.
+      if (listeners.contains(listener)) {
         if (listener is Function(T property)) {
           listener(property);
         } else {
@@ -126,5 +115,17 @@ class PropertyChangeNotifier<T extends Object> extends ChangeNotifier {
         }
       }
     }
+  }
+
+  // Reimplemented from [ChangeNotifier].
+  bool _debugAssertNotDisposed() {
+    assert(() {
+      if (_globalListeners == null || _propertyListeners == null) {
+        throw FlutterError('A $runtimeType was used after being disposed.\n'
+            'Once you have called dispose() on a $runtimeType, it can no longer be used.');
+      }
+      return true;
+    }());
+    return true;
   }
 }

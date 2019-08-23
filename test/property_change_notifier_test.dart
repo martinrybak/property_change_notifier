@@ -55,13 +55,13 @@ void main() {
       expect(() => model.addListener(null), throwsAssertionError);
     });
 
-    test('adding same listener with same properties throws exception', () {
+    test('adding same listener with same properties returns normally', () {
       final model = PropertyChangeNotifier();
       final listener = () {};
       expect(() {
         model.addListener(listener, ['foo']);
         model.addListener(listener, ['foo']);
-      }, throwsException);
+      }, returnsNormally);
     });
 
     test('adding same listener with different properties returns normally', () {
