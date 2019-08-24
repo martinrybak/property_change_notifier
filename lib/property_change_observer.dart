@@ -68,7 +68,7 @@ class _ObserverState<T extends PropertyChangeNotifier<S>, S extends Object> exte
   }
 }
 
-class ObservedModel<T extends PropertyChangeNotifier<S>, S extends Object> extends InheritedModel<String> {
+class ObservedModel<T extends PropertyChangeNotifier<S>, S extends Object> extends InheritedModel<S> {
   final T model;
   final S changedProperty;
 
@@ -85,7 +85,7 @@ class ObservedModel<T extends PropertyChangeNotifier<S>, S extends Object> exten
   }
 
   @override
-  bool updateShouldNotifyDependent(ObservedModel oldWidget, Set<String> aspects) {
+  bool updateShouldNotifyDependent(ObservedModel<T, S> oldWidget, Set<S> aspects) {
     return aspects.contains(this.changedProperty);
   }
 }
