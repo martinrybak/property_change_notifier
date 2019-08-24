@@ -35,10 +35,11 @@ void main() {
     });
 
     test('returns false after adding and removing same listener with properties', () {
+      final property = 'foo';
       final model = PropertyChangeNotifier();
       final listener = () {};
-      model.addListener(listener, ['foo']);
-      model.removeListener(listener, ['foo']);
+      model.addListener(listener, [property]);
+      model.removeListener(listener, [property]);
       expect(model.hasListeners, isFalse);
     });
   });
@@ -56,11 +57,12 @@ void main() {
     });
 
     test('adding same listener with same properties returns normally', () {
+      final property = 'foo';
       final model = PropertyChangeNotifier();
       final listener = () {};
       expect(() {
-        model.addListener(listener, ['foo']);
-        model.addListener(listener, ['foo']);
+        model.addListener(listener, [property]);
+        model.addListener(listener, [property]);
       }, returnsNormally);
     });
 
