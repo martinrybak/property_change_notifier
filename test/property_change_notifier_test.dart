@@ -3,6 +3,12 @@ import 'package:property_change_notifier/property_change_notifier.dart';
 
 void main() {
   group('hasListeners', () {
+    test('invoking after dispose() throws assertion', () {
+      final model = PropertyChangeNotifier();
+      model.dispose();
+      expect(() => model.hasListeners, throwsAssertionError);
+    });
+
     test('initially returns false', () {
       final model = PropertyChangeNotifier();
       expect(model.hasListeners, isFalse);
@@ -34,12 +40,6 @@ void main() {
       model.addListener(listener, ['foo']);
       model.removeListener(listener, ['foo']);
       expect(model.hasListeners, isFalse);
-    });
-
-    test('invoking after dispose() throws assertion', () {
-      final model = PropertyChangeNotifier();
-      model.dispose();
-      expect(() => model.hasListeners, throwsAssertionError);
     });
   });
 
@@ -110,85 +110,157 @@ void main() {
       expect(() => model.notifyListeners([]), throwsAssertionError);
     });
 
-    group('listener with no properties', () {
-      test('is invoked once when notifyListeners() is invoked with no properties', () {
-        final model = PropertyChangeNotifier();
-        final listener = expectAsync0(() {}, count: 1);
-        model.addListener(listener);
-        model.notifyListeners();
+    group('global listener', () {
+      group('with no property parameter', () {
+        test('is invoked when notifyListeners() is invoked with no properties', () {
+          final model = PropertyChangeNotifier();
+          final listener = expectAsync0(() {}, count: 1);
+          model.addListener(listener);
+          model.notifyListeners();
+        });
+
+        test('is invoked when notifyListeners() is invoked with a property', () {
+          final model = PropertyChangeNotifier();
+          final listener = expectAsync0(() {}, count: 1);
+          model.addListener(listener);
+          model.notifyListeners('foo');
+        });
       });
 
-      test('is invoked once when notifyListeners() is invoked with a property', () {
-        final model = PropertyChangeNotifier();
-        final listener = expectAsync0(() {}, count: 1);
-        model.addListener(listener);
-        model.notifyListeners('foo');
-      });
-    });
+      group('with property parameter', () {
+        test('is invoked with null property when notifyListeners() is invoked with no properties', () {
+          final model = PropertyChangeNotifier();
+          final listener = expectAsync1((_property) {
+            expect(_property, isNull);
+          }, count: 1);
+          model.addListener(listener);
+          model.notifyListeners();
+        });
 
-    group('listener with one property', () {
-      test('is not invoked once when notifyListeners() is invoked with no properties', () {
-        final model = PropertyChangeNotifier();
-        final listener = expectAsync0(() {}, count: 0);
-        model.addListener(listener, ['foo']);
-        model.notifyListeners();
-      });
-
-      test('is invoked once when notifyListeners() is invoked with same property', () {
-        final model = PropertyChangeNotifier();
-        final listener = expectAsync0(() {}, count: 1);
-        model.addListener(listener, ['foo']);
-        model.notifyListeners('foo');
-      });
-
-      test('is invoked once with property name when notifyListeners() is invoked with same property', () {
-        final model = PropertyChangeNotifier();
-        final property = 'foo';
-        final listener = expectAsync1((_property) {
-          expect(_property, _property);
-        }, count: 1);
-        model.addListener(listener, [property]);
-        model.notifyListeners(property);
-      });
-
-      test('is not invoked when notifyListeners() is invoked with different property', () {
-        final model = PropertyChangeNotifier();
-        final listener = expectAsync0(() {}, count: 0);
-        model.addListener(listener, ['foo']);
-        model.notifyListeners('bar');
+        test('is invoked with a property when notifyListeners() is invoked with a property', () {
+          final property = 'foo';
+          final model = PropertyChangeNotifier();
+          final listener = expectAsync1((_property) {
+            expect(_property, property);
+          }, count: 1);
+          model.addListener(listener);
+          model.notifyListeners(property);
+        });
       });
     });
 
-    group('listener with multiple properties', () {
-      test('is not invoked once when notifyListeners() is invoked with no properties', () {
-        final model = PropertyChangeNotifier();
-        final listener = expectAsync0(() {}, count: 0);
-        model.addListener(listener, ['foo', 'bar']);
-        model.notifyListeners();
+    group('listener on one property', () {
+      group('with no property parameter', () {
+        test('is not invoked when notifyListeners() is invoked with no properties', () {
+          final model = PropertyChangeNotifier();
+          final listener = expectAsync0(() {}, count: 0);
+          model.addListener(listener, ['foo']);
+          model.notifyListeners();
+        });
+
+        test('is invoked when notifyListeners() is invoked with same property', () {
+          final property = 'foo';
+          final model = PropertyChangeNotifier();
+          final listener = expectAsync0(() {}, count: 1);
+          model.addListener(listener, [property]);
+          model.notifyListeners(property);
+        });
+
+        test('is not invoked when notifyListeners() is invoked with different property', () {
+          final model = PropertyChangeNotifier();
+          final listener = expectAsync0(() {}, count: 0);
+          model.addListener(listener, ['foo']);
+          model.notifyListeners('bar');
+        });
       });
 
-      test('is invoked once when notifyListeners() is invoked with matching property', () {
-        final model = PropertyChangeNotifier();
-        final listener = expectAsync0(() {}, count: 1);
-        model.addListener(listener, ['foo', 'bar']);
-        model.notifyListeners('foo');
+      group('with no property parameter', () {
+        test('is not invoked when notifyListeners() is invoked with no properties', () {
+          final model = PropertyChangeNotifier();
+          final listener = expectAsync1((_) {}, count: 0);
+          model.addListener(listener, ['foo']);
+          model.notifyListeners();
+        });
+
+        test('is invoked with property name when notifyListeners() is invoked with same property', () {
+          final model = PropertyChangeNotifier();
+          final property = 'foo';
+          final listener = expectAsync1((_property) {
+            expect(_property, _property);
+          }, count: 1);
+          model.addListener(listener, [property]);
+          model.notifyListeners(property);
+        });
+
+        test('is not invoked when notifyListeners() is invoked with different property', () {
+          final model = PropertyChangeNotifier();
+          final listener = expectAsync1((_) {}, count: 0);
+          model.addListener(listener, ['foo']);
+          model.notifyListeners('bar');
+        });
+      });
+    });
+
+    group('listener on multiple properties', () {
+      group('with no property parameter', () {
+        test('is not invoked when notifyListeners() is invoked with no properties', () {
+          final model = PropertyChangeNotifier();
+          final listener = expectAsync0(() {}, count: 0);
+          model.addListener(listener, ['foo', 'bar']);
+          model.notifyListeners();
+        });
+
+        test('is invoked when notifyListeners() is invoked with matching property', () {
+          final property = 'foo';
+          final model = PropertyChangeNotifier();
+          final listener = expectAsync0(() {}, count: 1);
+          model.addListener(listener, [property, 'bar']);
+          model.notifyListeners(property);
+        });
+
+        test('is not invoked when notifyListeners() is invoked with different property', () {
+          final model = PropertyChangeNotifier();
+          final listener = expectAsync0(() {}, count: 0);
+          model.addListener(listener, ['foo', 'bar']);
+          model.notifyListeners('baz');
+        });
       });
 
-      test('is invoked once with property name when notifyListeners() is invoked with same property', () {
-        final model = PropertyChangeNotifier();
-        final property = 'foo';
-        final listener = expectAsync1((_property) {
-          expect(_property, _property);
-        }, count: 1);
-        model.addListener(listener, [property, 'bar']);
-        model.notifyListeners(property);
-      });
+      group('with property parameter', () {
+        test('is not invoked when notifyListeners() is invoked with no properties', () {
+          final model = PropertyChangeNotifier();
+          final listener = expectAsync1((_) {}, count: 0);
+          model.addListener(listener, ['foo', 'bar']);
+          model.notifyListeners();
+        });
 
-      test('is not invoked when notifyListeners() is invoked with different property', () {
-        final model = PropertyChangeNotifier();
-        final listener = expectAsync0(() {}, count: 0);
-        model.addListener(listener, ['foo', 'bar']);
-        model.notifyListeners('baz');
+        test('is invoked with property name when notifyListeners() is invoked with same property', () {
+          final model = PropertyChangeNotifier();
+          final property = 'foo';
+          final listener = expectAsync1((_property) {
+            expect(_property, _property);
+          }, count: 1);
+          model.addListener(listener, [property]);
+          model.notifyListeners(property);
+        });
+
+        test('is invoked with property name when notifyListeners() is invoked with same property and other property',
+            () {
+          final model = PropertyChangeNotifier();
+          final property = 'foo';
+          final listener = expectAsync1((_property) {
+            expect(_property, _property);
+          }, count: 1);
+          model.addListener(listener, [property, 'bar']);
+          model.notifyListeners(property);
+        });
+
+        test('is not invoked when notifyListeners() is invoked with different property', () {
+          final model = PropertyChangeNotifier();
+          final listener = expectAsync1((_) {}, count: 0);
+          model.addListener(listener, ['foo', 'bar']);
+          model.notifyListeners('baz');
+        });
       });
     });
   });
