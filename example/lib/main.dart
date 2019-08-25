@@ -40,7 +40,7 @@ class _MyAppState extends State<MyApp> {
         primarySwatch: Colors.blue,
       ),
       home: Scaffold(
-        body: Observer<Model, String>(
+        body: Observer(
           model: _model,
           child: Foo(),
         ),
