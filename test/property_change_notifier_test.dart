@@ -112,6 +112,29 @@ void main() {
       expect(() => model.notifyListeners([]), throwsAssertionError);
     });
 
+    test('removing listeners while invoking does not invoke removed listener', () {
+      final model = PropertyChangeNotifier();
+      final listener2 = expectAsync0(() {}, count: 0);
+      final listener1 = expectAsync0(() {
+        model.removeListener(listener2);
+      }, count: 1);
+
+      model.addListener(listener1);
+      model.addListener(listener2);
+      model.notifyListeners();
+    });
+
+    test('adding listeners while invoking does not invoke added listener', () {
+      final model = PropertyChangeNotifier();
+      final listener2 = expectAsync0(() {}, count: 0);
+      final listener1 = expectAsync0(() {
+        model.addListener(listener2);
+      }, count: 1);
+
+      model.addListener(listener1);
+      model.notifyListeners();
+    });
+
     group('global listener', () {
       group('with no property parameter', () {
         test('is invoked when notifyListeners() is invoked with no properties', () {
