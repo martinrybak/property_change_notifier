@@ -2,9 +2,16 @@ library property_change_notifier;
 
 import 'package:flutter/foundation.dart';
 
-/// An backwards-compatible implementation of [ChangeNotifier] that allows
+/// A backwards-compatible implementation of [ChangeNotifier] that allows
 /// subclasses to provide more granular information to listeners about what
-/// property was changed.
+/// specific property was changed. This lets listeners be much more efficient
+/// when responding to model changes. Any number of listeners can subscribe to
+/// any number of properties.
+///
+/// Like [ChangeNotifier], is optimized for small numbers (one or two) of listeners.
+/// It is O(N) for adding and removing listeners and O(N²) for dispatching
+/// notifications (where N is the number of listeners).
+///
 /// [T] is the type of the property name and is usually [String] but can
 /// be an [Enum] or any type that subclasses [Object]. To work correctly,
 /// [T] must implement `operator==` and `hashCode`.
@@ -34,13 +41,14 @@ class PropertyChangeNotifier<T extends Object> extends ChangeNotifier {
     return _globalListeners.isNotEmpty || _propertyListeners.isNotEmpty;
   }
 
-  /// Registers [listener] for the given [properties]. If [properties] is null or empty,
-  /// [listener] will be invoked for all property changes. [listener] must
-  /// either accept no parameters or a single [T] parameter. If [listener]
-  /// accepts a [T] parameter, it will be invoked with the changed property name.
-  /// The same [listener] can be added again for multiple properties.
+  /// Registers [listener] for the given [properties]. [listener] must not be null.
+  /// If [properties] is null or empty, [listener] will be added as a global listener, meaning
+  /// it will be invoked for all property changes. This is the default behavior of [ChangeNotifier].
+  /// [listener] must either accept no parameters or a single [T] parameter. If [listener]
+  /// accepts a [T] parameter, it will be invoked with the property name provided by [notifyListeners].
+  /// The same [listener] can be added for multiple properties.
   /// Adding the same [listener] for the same property is a no-op.
-  /// Adding a [listener] for a non-existent property will not fail but is pointless.
+  /// Adding a [listener] for a non-existent property will not fail, but is functionally pointless.
   @override
   void addListener(Function listener, [Iterable<T> properties]) {
     assert(_debugAssertNotDisposed());
@@ -62,9 +70,9 @@ class PropertyChangeNotifier<T extends Object> extends ChangeNotifier {
     }
   }
 
-  /// Removes [listener] for the given [properties]. If [properties] is null or empty,
-  /// [listener] will be removed as a global listener. Will not affect any other
-  /// properties [listeners] is registered for.
+  /// Removes [listener] for the given [properties]. [listener] must not be null.
+  /// If [properties] is null or empty, [listener] will be removed as a global listener.
+  /// Removing a listener will not affect any other properties [listeners] is registered for.
   /// Removing a non-existent listener is no-op.
   /// Removing a listener for a non-existent property will not fail.
   @override
@@ -113,12 +121,11 @@ class PropertyChangeNotifier<T extends Object> extends ChangeNotifier {
   }
 
   /// Notifies the appropriate listeners that [property] was changed.
-  /// [property] should really not be null; it is there for backwards compatibility.
   /// Subclasses should ideally provide a [property] parameter.
-  /// Global listeners (those that were added without any properties)
-  /// will be notified for every invocation, even if [property] is null.
+  /// It is only optional for backwards compatibility with [ChangeNotifier].
+  /// Global listeners will be notified every time, even if [property] is null.
   /// Listeners for specific properties will only be notified
-  /// if [property] is equal (==) to one of those properties.
+  /// if [property] is equal (operator==) to one of those properties.
   /// If [property] is not null, must be a single instance of [T] (typically a [String]).
   @override
   @protected
