@@ -56,23 +56,26 @@ void main() {
       expect(() => model.addListener(null), throwsAssertionError);
     });
 
-    test('adding same listener with same properties returns normally', () {
-      final property = 'foo';
+    test('empty properties registers global listener', () {
+      final listener = expectAsync0(() {}, count: 1);
       final model = PropertyChangeNotifier();
-      final listener = () {};
-      expect(() {
-        model.addListener(listener, [property]);
-        model.addListener(listener, [property]);
-      }, returnsNormally);
+      model.addListener(listener, []);
+      model.notifyListeners();
     });
 
-    test('adding same listener with different properties returns normally', () {
-      final model = PropertyChangeNotifier();
+    test('same global listener twice returns normally', () {
       final listener = () {};
-      expect(() {
-        model.addListener(listener, ['foo']);
-        model.addListener(listener, ['bar']);
-      }, returnsNormally);
+      final model = PropertyChangeNotifier();
+      model.addListener(listener);
+      expect(() => model.addListener(listener), returnsNormally);
+    });
+
+    test('same listener with properties twice returns normally', () {
+      final property = 'foo';
+      final listener = () {};
+      final model = PropertyChangeNotifier();
+      model.addListener(listener, [property]);
+      expect(() => model.addListener(listener, [property]), returnsNormally);
     });
   });
 
@@ -96,6 +99,23 @@ void main() {
     test('non-existent listener with properties returns normally', () {
       final model = PropertyChangeNotifier();
       expect(() => model.removeListener(() {}, ['foo']), returnsNormally);
+    });
+
+    test('same global listener twice returns normally', () {
+      final listener = () {};
+      final model = PropertyChangeNotifier();
+      model.addListener(listener);
+      model.removeListener(listener);
+      expect(() => model.removeListener(listener), returnsNormally);
+    });
+
+    test('same listener with properties twice returns normally', () {
+      final property = 'foo';
+      final listener = () {};
+      final model = PropertyChangeNotifier();
+      model.addListener(listener, [property]);
+      model.removeListener(listener, [property]);
+      model.removeListener(listener, [property]);
     });
   });
 
@@ -133,6 +153,63 @@ void main() {
 
       model.addListener(listener1);
       model.notifyListeners();
+    });
+
+    test('same global listener is only invoked once', () {
+      final model = PropertyChangeNotifier();
+      final listener = expectAsync0(() {}, count: 1);
+      model.addListener(listener);
+      model.addListener(listener);
+      model.notifyListeners();
+    });
+
+    test('same listener with same properties is only invoked once', () {
+      final property = 'foo';
+      final model = PropertyChangeNotifier();
+      final listener = expectAsync0(() {}, count: 1);
+      model.addListener(listener, [property]);
+      model.addListener(listener, [property]);
+      model.notifyListeners(property);
+    });
+
+    test('same listener with different properties is invoked for each property', () {
+      final property1 = 'foo';
+      final property2 = 'bar';
+      final model = PropertyChangeNotifier();
+      final listener = expectAsync0(() {}, count: 2);
+      model.addListener(listener, [property1]);
+      model.addListener(listener, [property2]);
+      model.notifyListeners(property1);
+      model.notifyListeners(property2);
+    });
+
+    test('adding and removing same listener with different properties is invoked for remaining property only', () {
+      final property1 = 'foo';
+      final property2 = 'bar';
+      final model = PropertyChangeNotifier();
+      final listener = expectAsync0(() {}, count: 1);
+      model.addListener(listener, [property1]);
+      model.addListener(listener, [property2]);
+      model.removeListener(listener, [property2]);
+      model.notifyListeners(property1);
+      model.notifyListeners(property2);
+    });
+
+    test('removed global listener is no longer invoked', () {
+      final model = PropertyChangeNotifier();
+      final listener = expectAsync0(() {}, count: 0);
+      model.addListener(listener);
+      model.removeListener(listener);
+      model.notifyListeners();
+    });
+
+    test('removed listener with properties is no longer invoked', () {
+      final property = 'foo';
+      final model = PropertyChangeNotifier();
+      final listener = expectAsync0(() {}, count: 0);
+      model.addListener(listener, [property]);
+      model.removeListener(listener, [property]);
+      model.notifyListeners(property);
     });
 
     group('global listener', () {

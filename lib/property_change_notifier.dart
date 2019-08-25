@@ -2,11 +2,30 @@ library property_change_notifier;
 
 import 'package:flutter/foundation.dart';
 
-/// To work correctly, [property] must implement `operator==` and `hashCode`.
+/// An backwards-compatible implementation of [ChangeNotifier] that allows
+/// subclasses to provide more granular information to listeners about what
+/// property was changed.
+/// [T] is the type of the property name and is usually [String] but can
+/// be an [Enum] or any type that subclasses [Object]. To work correctly,
+/// [T] must implement `operator==` and `hashCode`.
 class PropertyChangeNotifier<T extends Object> extends ChangeNotifier {
   var _globalListeners = ObserverList<Function>();
   var _propertyListeners = <T, ObserverList<Function>>{};
 
+  /// Reimplemented from [ChangeNotifier].
+  /// Clients should not depend on this value for their behavior, because having
+  /// one listener's logic change when another listener happens to start or stop
+  /// listening will lead to extremely hard-to-track bugs. Subclasses might use
+  /// this information to determine whether to do any work when there are no
+  /// listeners, however; for example, resuming a [Stream] when a listener is
+  /// added and pausing it when a listener is removed.
+  ///
+  /// Typically this is used by overriding [addListener], checking if
+  /// [hasListeners] is false before calling `super.addListener()`, and if so,
+  /// starting whatever work is needed to determine when to call
+  /// [notifyListeners]; and similarly, by overriding [removeListener], checking
+  /// if [hasListeners] is false after calling `super.removeListener()`, and if
+  /// so, stopping that same work.
   @override
   @protected
   @visibleForTesting
@@ -15,47 +34,55 @@ class PropertyChangeNotifier<T extends Object> extends ChangeNotifier {
     return _globalListeners.isNotEmpty || _propertyListeners.isNotEmpty;
   }
 
+  /// Registers [listener] for the given [properties]. If [properties] is null or empty,
+  /// [listener] will be invoked for all property changes. [listener] must
+  /// either accept no parameters or a single [T] parameter. If [listener]
+  /// accepts a [T] parameter, it will be invoked with the changed property name.
+  /// The same [listener] can be added again for multiple properties.
+  /// Adding the same [listener] for the same property is a no-op.
+  /// Adding a [listener] for a non-existent property will not fail but is pointless.
   @override
   void addListener(Function listener, [Iterable<T> properties]) {
     assert(_debugAssertNotDisposed());
     assert(listener != null);
+    assert(listener is Function() || listener is Function(T property));
 
-    // If no properties provided, register global listener only
-    if (properties == null) {
-      _globalListeners.add(listener);
+    // Register global listener only
+    if (properties == null || properties.isEmpty) {
+      _addListener(_globalListeners, listener);
       return;
     }
 
+    // Register listener for every property
     for (final property in properties) {
-      // If property has no listeners yet; create map entry
       if (!_propertyListeners.containsKey(property)) {
         _propertyListeners[property] = ObserverList<Function>();
       }
-
-      // If listener already registered for this property, ignore
-      if (_propertyListeners[property].contains(listener)) {
-        continue;
-      }
-
-      _propertyListeners[property].add(listener);
+      _addListener(_propertyListeners[property], listener);
     }
   }
 
+  /// Removes [listener] for the given [properties]. If [properties] is null or empty,
+  /// [listener] will be removed as a global listener. Will not affect any other
+  /// properties [listeners] is registered for.
+  /// Removing a non-existent listener is no-op.
+  /// Removing a listener for a non-existent property will not fail.
   @override
   void removeListener(Function listener, [Iterable<T> properties]) {
     assert(_debugAssertNotDisposed());
     assert(listener != null);
 
-    // If no properties provided, remove global listener only
-    if (properties == null) {
+    // Remove global listener only
+    if (properties == null || properties.isEmpty) {
       _globalListeners.remove(listener);
       return;
     }
 
+    // Remove listener for every property
     for (final property in properties) {
-      // If no map entry exists for property, exit
+      // If no map entry exists for property, ignore
       if (!_propertyListeners.containsKey(property)) {
-        return;
+        continue;
       }
 
       // Remove listener
@@ -69,6 +96,13 @@ class PropertyChangeNotifier<T extends Object> extends ChangeNotifier {
     }
   }
 
+  /// Reimplemented from [ChangeNotifier].
+  /// Discards any resources used by the object. After this is called, the
+  /// object is not in a usable state and should be discarded (calls to
+  /// [addListener] and [removeListener] will throw after the object is
+  /// disposed).
+  ///
+  /// This method should only be called by the object's owner.
   @override
   @mustCallSuper
   void dispose() {
@@ -78,6 +112,14 @@ class PropertyChangeNotifier<T extends Object> extends ChangeNotifier {
     super.dispose();
   }
 
+  /// Notifies the appropriate listeners that [property] was changed.
+  /// [property] should really not be null; it is there for backwards compatibility.
+  /// Subclasses should ideally provide a [property] parameter.
+  /// Global listeners (those that were added without any properties)
+  /// will be notified for every invocation, even if [property] is null.
+  /// Listeners for specific properties will only be notified
+  /// if [property] is equal (==) to one of those properties.
+  /// If [property] is not null, must be a single instance of [T] (typically a [String]).
   @override
   @protected
   @visibleForTesting
@@ -96,6 +138,13 @@ class PropertyChangeNotifier<T extends Object> extends ChangeNotifier {
     // If listeners exist for this property, notify them.
     if (_propertyListeners.containsKey(property)) {
       _notifyListeners(_propertyListeners[property], property);
+    }
+  }
+
+  /// Adds [listener] to [listeners] only if is not already present.
+  void _addListener(ObserverList<Function> listeners, Function listener) {
+    if (!listeners.contains(listener)) {
+      listeners.add(listener);
     }
   }
 
