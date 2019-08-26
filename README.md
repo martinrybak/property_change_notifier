@@ -23,7 +23,7 @@ A drop-in replacement for [ChangeNotifier](https://api.flutter.dev/flutter/found
 ### Model implementation
 
 ```
-class Foo extends PropertyChangeNotifier<String> {
+class Foo with PropertyChangeNotifier<String> {
   String _bar;
   String _baz;
 
@@ -42,7 +42,7 @@ class Foo extends PropertyChangeNotifier<String> {
 }
 ```
 
-`<String>` is the generic type of the property you provide to `notifyListeners()`. This is typically a `String` but can be any type.
+You can use `PropertyChangeNotifier` as a superclass or a mixin. `<String>` is the generic type of the property you provide to `notifyListeners()`. This is typically a `String` but can be any type.
 
 ### Listening to a single property
 When creating a listener, provide an additional parameter containing the property name you wish to observe, wrapped in an [Iterable](https://api.dartlang.org/stable/2.4.0/dart-core/Iterable-class.html) (typically a [List](https://api.dartlang.org/stable/2.4.0/dart-core/List-class.html)):
@@ -169,6 +169,30 @@ model.addListener(_listener, [FooProperties.bar]);
 ```
 
 You can even use your own custom types as property names. They just must extend [Object](https://api.dartlang.org/stable/2.4.0/dart-core/Object-class.html) and correctly implement equality using ``==`` and ``hashCode``. 
+
+## Compiler Error
+
+If you see the following error when compiling:
+
+```
+error: The class 'PropertyChangeNotifier' can't be used as a mixin because it extends a class other than Object.
+```
+The solution is to ignore the `mixin_inherits_from_not_object` static analyzer rule. You can do this by adding the following line above your model code:
+
+```
+// ignore: mixin_inherits_from_not_object
+class Model with PropertyChangeNotifier<String> {
+...
+}
+```
+
+Or you can add the following to your `analysis_options.yaml` file:
+
+```
+analyzer:
+  errors:
+    mixin_inherits_from_not_object: ignore
+```    
 
 ## Unit Tests
 
