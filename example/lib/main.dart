@@ -4,7 +4,7 @@ import 'package:property_change_notifier/property_change_observer.dart';
 
 void main() => runApp(MyApp());
 
-class Model extends PropertyChangeNotifier<String> {
+class Model with PropertyChangeNotifier<String> {
   String _bar;
   String _baz;
 
