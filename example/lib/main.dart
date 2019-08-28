@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:property_change_notifier/property_change_notifier.dart';
-import 'package:property_change_notifier/property_change_observer.dart';
+import 'package:property_change_notifier/property_change_provider.dart';
 
 void main() => runApp(MyApp());
 
@@ -40,7 +40,7 @@ class _MyAppState extends State<MyApp> {
         primarySwatch: Colors.blue,
       ),
       home: Scaffold(
-        body: Observer(
+        body: PropertyChangeProvider(
           model: _model,
           child: Foo(),
         ),
@@ -68,7 +68,7 @@ class Foo extends StatelessWidget {
 class NotListener extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
-    final model = Observer.of<Model, String>(context, listen: false);
+    final model = PropertyChangeProvider.of<Model, String>(context, listen: false);
     return Text(DateTime.now().toIso8601String());
   }
 }
@@ -76,7 +76,7 @@ class NotListener extends StatelessWidget {
 class GlobalListener extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
-    final model = Observer.of<Model, String>(context);
+    final model = PropertyChangeProvider.of<Model, String>(context);
     return Text(DateTime.now().toIso8601String());
   }
 }
@@ -84,7 +84,7 @@ class GlobalListener extends StatelessWidget {
 class MultiListener extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
-    final model = Observer.of<Model, String>(context, properties: ['bar', 'baz']);
+    final model = PropertyChangeProvider.of<Model, String>(context, properties: ['bar', 'baz']);
     return Text(DateTime.now().toIso8601String());
   }
 }
@@ -92,7 +92,7 @@ class MultiListener extends StatelessWidget {
 class BarListener extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
-    final model = Observer.of<Model, String>(context, properties: ['bar']);
+    final model = PropertyChangeProvider.of<Model, String>(context, properties: ['bar']);
     return RaisedButton(
       child: Text(model.bar),
       onPressed: () {
@@ -105,7 +105,7 @@ class BarListener extends StatelessWidget {
 class BazListener extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
-    final model = Observer.of<Model, String>(context, properties: ['baz']);
+    final model = PropertyChangeProvider.of<Model, String>(context, properties: ['baz']);
     return RaisedButton(
       child: Text(model.baz),
       onPressed: () {

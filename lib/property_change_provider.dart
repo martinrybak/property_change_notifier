@@ -1,7 +1,7 @@
 import 'package:flutter/widgets.dart';
 import 'package:property_change_notifier/property_change_notifier.dart';
 
-class Observer<T extends PropertyChangeNotifier> extends StatefulWidget {
+class PropertyChangeProvider<T extends PropertyChangeNotifier> extends StatefulWidget {
   static Type _typeOf<T>() => T;
 
   static T of<T extends PropertyChangeNotifier<S>, S extends Object>(BuildContext context, {Iterable<S> properties, bool listen = true}) {
@@ -28,16 +28,16 @@ class Observer<T extends PropertyChangeNotifier> extends StatefulWidget {
     return model.model;
   }
 
-  const Observer({Key key, this.model, this.child}) : super(key: key);
+  const PropertyChangeProvider({Key key, this.model, this.child}) : super(key: key);
 
   final Widget child;
   final T model;
 
   @override
-  _ObserverState createState() => _ObserverState<T>();
+  _PropertyChangeProviderState createState() => _PropertyChangeProviderState<T>();
 }
 
-class _ObserverState<T extends PropertyChangeNotifier> extends State<Observer<T>> {
+class _PropertyChangeProviderState<T extends PropertyChangeNotifier> extends State<PropertyChangeProvider<T>> {
   Object _changedProperty;
 
   @override
