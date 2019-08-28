@@ -69,16 +69,16 @@ class _PropertyChangeProviderState<T extends PropertyChangeNotifier> extends Sta
 }
 
 class PropertyChangeModel<T extends PropertyChangeNotifier> extends InheritedModel {
-  final _PropertyChangeProviderState state;
+  final _PropertyChangeProviderState _state;
 
   PropertyChangeModel({
     Key key,
-    this.state,
+    _PropertyChangeProviderState state,
     Widget child,
-  }) : super(key: key, child: child);
+  }) : _state = state, super(key: key, child: child);
 
-  T get value => this.state.widget.value;
-  Object get property => this.state._changedProperty;
+  T get value => _state.widget.value;
+  Object get property => _state._property;
 
   @override
   bool updateShouldNotify(PropertyChangeModel oldWidget) {
@@ -87,7 +87,7 @@ class PropertyChangeModel<T extends PropertyChangeNotifier> extends InheritedMod
 
   @override
   bool updateShouldNotifyDependent(PropertyChangeModel<T> oldWidget, Set<Object> aspects) {
-    return aspects.contains(this.state._changedProperty);
+    return aspects.contains(_state._property);
   }
 }
 
