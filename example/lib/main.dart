@@ -60,6 +60,7 @@ class Foo extends StatelessWidget {
         MultiListener(),
         BarListener(),
         BazListener(),
+        ConsumerListener(),
       ],
     ));
   }
@@ -68,7 +69,7 @@ class Foo extends StatelessWidget {
 class NotListener extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
-    final model = PropertyChangeProvider.of<Model>(context, listen: false);
+    final model = PropertyChangeProvider.of<Model, String>(context, listen: false);
     return Text(DateTime.now().toIso8601String());
   }
 }
@@ -76,7 +77,7 @@ class NotListener extends StatelessWidget {
 class GlobalListener extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
-    final model = PropertyChangeProvider.of<Model>(context);
+    final model = PropertyChangeProvider.of<Model, String>(context);
     return Text(DateTime.now().toIso8601String());
   }
 }
@@ -84,7 +85,7 @@ class GlobalListener extends StatelessWidget {
 class MultiListener extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
-    final model = PropertyChangeProvider.of<Model>(context, properties: ['bar', 'baz']);
+    final model = PropertyChangeProvider.of<Model, String>(context, properties: ['bar', 'baz']);
     return Text('${model.property} was changed');
   }
 }
@@ -92,7 +93,7 @@ class MultiListener extends StatelessWidget {
 class BarListener extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
-    final model = PropertyChangeProvider.of<Model>(context, properties: ['bar']).value;
+    final model = PropertyChangeProvider.of<Model, String>(context, properties: ['bar']).value;
     return RaisedButton(
       child: Text(model.bar),
       onPressed: () {
@@ -113,5 +114,31 @@ class BazListener extends StatelessWidget {
         },
       );
     });
+
+class ConsumerListener extends StatelessWidget {
+  @override
+  Widget build(BuildContext context) {
+    return PropertyChangeConsumer<Model, String>(
+      properties: ['foo', 'bar'],
+      builder: (context, value, property) {
+        return Column(
+          children: [
+            Text('$property was changed!'),
+            RaisedButton(
+              child: Text('Update bar'),
+              onPressed: () {
+                value.bar = DateTime.now().toString();
+              },
+            ),
+            RaisedButton(
+              child: Text('Update baz'),
+              onPressed: () {
+                value.baz = DateTime.now().toString();
+              },
+            ),
+          ],
+        );
+      },
+    );
   }
 }
