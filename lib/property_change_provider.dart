@@ -4,34 +4,35 @@ import 'package:property_change_notifier/property_change_notifier.dart';
 class PropertyChangeProvider<T extends PropertyChangeNotifier> extends StatefulWidget {
   static Type _typeOf<T>() => T;
 
-  static T of<T extends PropertyChangeNotifier<S>, S extends Object>(BuildContext context, {Iterable<S> properties, bool listen = true}) {
-    assert (listen || properties == null, "No need to provide properties if you're not going to listen to them.");
+  static PropertyChangeModel<T> of<T extends PropertyChangeNotifier>(BuildContext context,
+      {Iterable<Object> properties, bool listen = true}) {
+    assert(listen || properties == null, "No need to provide properties if you're not going to listen to them.");
 
     if (!listen) {
-      final type = _typeOf<ObservedModel<T>>();
-      return _getModel(context.ancestorWidgetOfExactType(type) as ObservedModel);
+      final type = _typeOf<PropertyChangeModel<T>>();
+      return _getModel(context.ancestorWidgetOfExactType(type) as PropertyChangeModel);
     }
 
     if (properties == null) {
-      return _getModel(InheritedModel.inheritFrom<ObservedModel<T>>(context));
+      return _getModel(InheritedModel.inheritFrom<PropertyChangeModel<T>>(context));
     }
 
-    ObservedModel widget;
+    PropertyChangeModel widget;
     for (final property in properties) {
-      widget = InheritedModel.inheritFrom<ObservedModel<T>>(context, aspect: property);
+      widget = InheritedModel.inheritFrom<PropertyChangeModel<T>>(context, aspect: property);
     }
     return _getModel(widget);
   }
 
-  static T _getModel<T extends PropertyChangeNotifier>(ObservedModel<T> model) {
+  static PropertyChangeModel<T> _getModel<T extends PropertyChangeNotifier>(PropertyChangeModel<T> model) {
     assert(model != null, 'Could not find an ancestor Observer<$T>');
-    return model.model;
+    return model;
   }
 
-  const PropertyChangeProvider({Key key, this.model, this.child}) : super(key: key);
+  const PropertyChangeProvider({Key key, this.value, this.child}) : super(key: key);
 
   final Widget child;
-  final T model;
+  final T value;
 
   @override
   _PropertyChangeProviderState createState() => _PropertyChangeProviderState<T>();
@@ -43,20 +44,19 @@ class _PropertyChangeProviderState<T extends PropertyChangeNotifier> extends Sta
   @override
   void initState() {
     super.initState();
-    widget.model.addListener(_listener);
+    widget.value.addListener(_listener);
   }
 
   @override
   void dispose() {
-    widget.model.removeListener(_listener);
+    widget.value.removeListener(_listener);
     super.dispose();
   }
 
   @override
   Widget build(BuildContext context) {
-    return ObservedModel<T>(
-      model: widget.model,
-      changedProperty: _changedProperty,
+    return PropertyChangeModel<T>(
+      state: this,
       child: widget.child,
     );
   }
@@ -68,24 +68,45 @@ class _PropertyChangeProviderState<T extends PropertyChangeNotifier> extends Sta
   }
 }
 
-class ObservedModel<T extends PropertyChangeNotifier> extends InheritedModel {
-  final T model;
-  final Object changedProperty;
+class PropertyChangeModel<T extends PropertyChangeNotifier> extends InheritedModel {
+  final _PropertyChangeProviderState state;
 
-  ObservedModel({
+  PropertyChangeModel({
     Key key,
-    this.model,
-    this.changedProperty,
+    this.state,
     Widget child,
   }) : super(key: key, child: child);
 
+  T get value => this.state.widget.value;
+  Object get property => this.state._changedProperty;
+
   @override
-  bool updateShouldNotify(ObservedModel oldWidget) {
+  bool updateShouldNotify(PropertyChangeModel oldWidget) {
     return true;
   }
 
   @override
-  bool updateShouldNotifyDependent(ObservedModel<T> oldWidget, Set<Object> aspects) {
-    return aspects.contains(this.changedProperty);
+  bool updateShouldNotifyDependent(PropertyChangeModel<T> oldWidget, Set<Object> aspects) {
+    return aspects.contains(this.state._changedProperty);
+  }
+}
+
+class PropertyChangeConsumer<T extends PropertyChangeNotifier> extends StatelessWidget {
+  final bool listen;
+  final Iterable<Object> properties;
+  final Widget Function(BuildContext, T, Object) builder;
+
+  PropertyChangeConsumer({
+    Key key,
+    this.properties,
+    this.listen = true,
+    @required this.builder,
+  })  : assert(builder != null),
+        super(key: key);
+
+  @override
+  Widget build(BuildContext context) {
+    final model = PropertyChangeProvider.of<T>(context, properties: this.properties, listen: this.listen);
+    return this.builder(context, model.value, model.property);
   }
 }
