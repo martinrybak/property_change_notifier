@@ -39,7 +39,7 @@ class PropertyChangeProvider<T extends PropertyChangeNotifier> extends StatefulW
 }
 
 class _PropertyChangeProviderState<T extends PropertyChangeNotifier> extends State<PropertyChangeProvider<T>> {
-  Object _changedProperty;
+  Object _property;
 
   @override
   void initState() {
@@ -63,7 +63,7 @@ class _PropertyChangeProviderState<T extends PropertyChangeNotifier> extends Sta
 
   void _listener(Object property) {
     setState(() {
-      _changedProperty = property;
+      _property = property;
     });
   }
 }
