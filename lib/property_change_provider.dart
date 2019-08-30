@@ -144,27 +144,27 @@ class PropertyChangeModel<T extends PropertyChangeNotifier> extends InheritedMod
 /// Access both the model value and the changed property via the [builder] callback:
 /// ```dart
 /// PropertyChangeConsumer<MyModel>(
-//    properties: ['foo', 'bar'],
-//    builder: (context, model, property) {
-//      return Column(
-//        children: [
-//          Text('$property was changed!'),
-//          RaisedButton(
-//            child: Text('Update foo'),
-//            onPressed: () {
-//              model.foo = DateTime.now().toString();
-//            },
-//          ),
-//          RaisedButton(
-//            child: Text('Update bar'),
-//            onPressed: () {
-//              model.bar = DateTime.now().toString();
-//            },
-//          ),
-//        ],
-//      );
-//    },
-//  );
+///    properties: ['foo', 'bar'],
+///    builder: (context, model, property) {
+///      return Column(
+///        children: [
+///          Text('$property was changed!'),
+///          RaisedButton(
+///            child: Text('Update foo'),
+///            onPressed: () {
+///              model.foo = DateTime.now().toString();
+///            },
+///          ),
+///          RaisedButton(
+///            child: Text('Update bar'),
+///            onPressed: () {
+///              model.bar = DateTime.now().toString();
+///            },
+///          ),
+///        ],
+///      );
+///    },
+///  );
 /// ```
 class PropertyChangeConsumer<T extends PropertyChangeNotifier> extends StatelessWidget {
   final Iterable<Object> properties;
