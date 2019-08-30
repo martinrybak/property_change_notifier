@@ -18,7 +18,7 @@ A drop-in replacement for [ChangeNotifier](https://api.flutter.dev/flutter/found
 1. Update your model to include the property name when calling `notifyListeners()`.
 1. When ready, update existing listeners to observe only specific properties.
 
-## Usage
+## Usage in Dart
 
 ### Model implementation
 
@@ -167,7 +167,7 @@ model.addListener(_listener, [MyModelProperties.foo]);
 
 You can even use your own custom types as property names. They just must extend [Object](https://api.dartlang.org/stable/2.4.0/dart-core/Object-class.html) and correctly implement equality using ``==`` and ``hashCode``. 
 
-## Compilation Error
+### Mixin compilation error
 
 If you see the following error when compiling:
 
@@ -190,6 +190,102 @@ analyzer:
   errors:
     mixin_inherits_from_not_object: ignore
 ```    
+
+## Usage in Flutter
+
+The `PropertyChangeProvider` widget can be used to expose a `PropertyChangeNotifier` instance to descendant widgets, and automatically rebuild them when only certain properties change. First, create a root `PropertyChangeProvider` widget with an instance of your model:
+
+```
+PropertyChangeProvider(
+  value: MyModel(),
+  child: MyApp(...)
+};
+```
+
+Then, from any descendant widget, listen for changes to all or some properties by using the standard `of()` syntax used with `InheritedWidget`. You can then access either the model itself or its last changed property. Here are a few different examples:
+
+###Rebuilding when any property changes
+Just call the `of()` method anywhere from your widget, passing in its `BuildContext`.
+
+```
+@override
+Widget build(BuildContext context) {
+  PropertyChangeProvider.of<MyModel>(context);
+  return Text('MyModel changed!);
+}
+```
+
+### Rebuilding when a single property changes
+Provide a `properties` parameter list with a single value.
+
+```
+@override
+Widget build(BuildContext context) {
+  PropertyChangeProvider.of<MyModel>(context, properties: ['foo']);    
+  return Text('Foo changed!);
+}
+```
+
+### Rebuilding when multiple properties change
+Provide a `properties` parameter list with multiple values.
+
+```
+@override
+Widget build(BuildContext context) {
+  PropertyChangeProvider.of<MyModel>(context, properties: ['foo', 'bar']);    
+  return Text('Foo or Bar changed!);
+}
+```
+
+### Accessing the model instance
+Call `value` on the return value of the `of()` method.
+
+```
+@override
+Widget build(BuildContext context) {
+  final model = PropertyChangeProvider.of<MyModel>(context).value;
+  ...
+}
+```
+
+### Accessing the model instance without rebuilding
+You may want to just access the model without registering for a rebuild. For example, a button that mutates the model does not need to listen for changes. Provide a `listen` parameter with a value of `false`:
+
+```
+@override
+Widget build(BuildContext context) {
+  final model = PropertyChangeProvider.of<MyModel>(context, listen: false).value;
+  ...
+}
+```
+
+### Accessing the last changed property
+Useful if you are listening to all or multiple properties and wish to know which property was changed. Call `property` on the return value of the `of()` method.
+
+
+```
+@override
+Widget build(BuildContext context) {
+  final property = PropertyChangeProvider.of<MyModel>(context).property;
+  ...
+}
+```
+
+### Accessing as a widget
+`PropertyChangeConsumer` is a widget-based listener for cases where a `BuildContext` is hard to access, or if you prefer this kind of API. You can access both the model value and the last changed property via the `builder` callback:
+
+```
+@override
+Widget build(BuildContext context) {
+  return PropertyChangeConsumer<MyModel>(
+    properties: ['foo', 'bar'],
+    builder: (context, model, property) {
+      ...
+    },
+  );
+}
+
+```
 
 ## Unit Tests
 
