@@ -69,7 +69,7 @@ class Foo extends StatelessWidget {
 class NotListener extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
-    final model = PropertyChangeProvider.of<Model, String>(context, listen: false);
+    final model = PropertyChangeProvider.of<Model>(context, listen: false);
     return Text(DateTime.now().toIso8601String());
   }
 }
@@ -77,7 +77,7 @@ class NotListener extends StatelessWidget {
 class GlobalListener extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
-    final model = PropertyChangeProvider.of<Model, String>(context);
+    final model = PropertyChangeProvider.of<Model>(context);
     return Text(DateTime.now().toIso8601String());
   }
 }
@@ -85,7 +85,7 @@ class GlobalListener extends StatelessWidget {
 class MultiListener extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
-    final model = PropertyChangeProvider.of<Model, String>(context, properties: ['bar', 'baz']);
+    final model = PropertyChangeProvider.of<Model>(context, properties: ['bar', 'baz']);
     return Text('${model.property} was changed');
   }
 }
@@ -93,7 +93,7 @@ class MultiListener extends StatelessWidget {
 class BarListener extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
-    final model = PropertyChangeProvider.of<Model, String>(context, properties: ['bar']).value;
+    final model = PropertyChangeProvider.of<Model>(context, properties: ['bar']).value;
     return RaisedButton(
       child: Text(model.bar),
       onPressed: () {
@@ -106,7 +106,7 @@ class BarListener extends StatelessWidget {
 class BazListener extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
-    return PropertyChangeConsumer<Model>(properties: ['baz'], builder: (context, model, property){
+    return PropertyChangeConsumer<Model>(properties: ['baz'], builder: (context, model, property) {
       return RaisedButton(
         child: Text('$property was changed to ${model.baz}'),
         onPressed: () {
@@ -114,11 +114,13 @@ class BazListener extends StatelessWidget {
         },
       );
     });
+  }
+}
 
 class ConsumerListener extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
-    return PropertyChangeConsumer<Model, String>(
+    return PropertyChangeConsumer<Model>(
       properties: ['foo', 'bar'],
       builder: (context, value, property) {
         return Column(
