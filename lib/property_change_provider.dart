@@ -9,7 +9,7 @@ class PropertyChangeProvider<T extends PropertyChangeNotifier> extends StatefulW
     Iterable<Object> properties,
     bool listen = true,
   }) {
-    assert(listen || properties == null, "No need to provide properties if you're not going to listen to them.");
+    assert(listen || properties == null, "Don't provide properties if you're not going to listen to them.");
 
     final nullCheck = (InheritedModel model) {
       assert(model != null, 'Could not find an ancestor PropertyChangeProvider<$T>');
@@ -21,7 +21,7 @@ class PropertyChangeProvider<T extends PropertyChangeNotifier> extends StatefulW
       return nullCheck(context.ancestorWidgetOfExactType(type) as PropertyChangeModel);
     }
 
-    if (properties == null) {
+    if (properties == null || properties.isEmpty) {
       return nullCheck(InheritedModel.inheritFrom<PropertyChangeModel<T>>(context));
     }
 
