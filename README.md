@@ -1,6 +1,6 @@
 # property_change_notifier
 
-A drop-in replacement for [ChangeNotifier](https://api.flutter.dev/flutter/foundation/ChangeNotifier-class.html) that lets listeners observe only certain properties of a model.
+A drop-in replacement for [ChangeNotifier](https://api.flutter.dev/flutter/foundation/ChangeNotifier-class.html) for observing only certain properties of a model.
 
 ![](screenshot.png)
 
