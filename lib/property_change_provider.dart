@@ -4,32 +4,42 @@ import 'package:property_change_notifier/property_change_notifier.dart';
 class PropertyChangeProvider<T extends PropertyChangeNotifier> extends StatefulWidget {
   static Type _typeOf<T>() => T;
 
-  static PropertyChangeModel<T> of<T extends PropertyChangeNotifier>(BuildContext context,
-      {Iterable<Object> properties, bool listen = true}) {
+  static PropertyChangeModel<T> of<T extends PropertyChangeNotifier>(
+    BuildContext context, {
+    Iterable<Object> properties,
+    bool listen = true,
+  }) {
     assert(listen || properties == null, "No need to provide properties if you're not going to listen to them.");
+
+    final nullCheck = (InheritedModel model) {
+      assert(model != null, 'Could not find an ancestor PropertyChangeProvider<$T>');
+      return model;
+    };
 
     if (!listen) {
       final type = _typeOf<PropertyChangeModel<T>>();
-      return _getModel(context.ancestorWidgetOfExactType(type) as PropertyChangeModel);
+      return nullCheck(context.ancestorWidgetOfExactType(type) as PropertyChangeModel);
     }
 
     if (properties == null) {
-      return _getModel(InheritedModel.inheritFrom<PropertyChangeModel<T>>(context));
+      return nullCheck(InheritedModel.inheritFrom<PropertyChangeModel<T>>(context));
     }
 
-    PropertyChangeModel widget;
     for (final property in properties) {
-      widget = InheritedModel.inheritFrom<PropertyChangeModel<T>>(context, aspect: property);
+      final widget = InheritedModel.inheritFrom<PropertyChangeModel<T>>(context, aspect: property);
+      if (property == properties.last) {
+        return nullCheck(widget);
+      }
     }
-    return _getModel(widget);
+
+    return nullCheck(null);
   }
 
-  static PropertyChangeModel<T> _getModel<T extends PropertyChangeNotifier>(PropertyChangeModel<T> model) {
-    assert(model != null, 'Could not find an ancestor Observer<$T>');
-    return model;
-  }
-
-  const PropertyChangeProvider({Key key, this.value, this.child}) : super(key: key);
+  const PropertyChangeProvider({
+    Key key,
+    this.value,
+    this.child,
+  }) : super(key: key);
 
   final Widget child;
   final T value;
@@ -75,7 +85,8 @@ class PropertyChangeModel<T extends PropertyChangeNotifier> extends InheritedMod
     Key key,
     _PropertyChangeProviderState state,
     Widget child,
-  }) : _state = state, super(key: key, child: child);
+  })  : _state = state,
+        super(key: key, child: child);
 
   T get value => _state.widget.value;
   Object get property => _state._property;
