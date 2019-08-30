@@ -52,7 +52,8 @@ class _MyAppState extends State<MyApp> {
 class Foo extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
-    return Center(child: Column(
+    return Center(
+        child: Column(
       mainAxisSize: MainAxisSize.min,
       children: <Widget>[
         NotListener(),
@@ -106,14 +107,17 @@ class BarListener extends StatelessWidget {
 class BazListener extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
-    return PropertyChangeConsumer<Model>(properties: ['baz'], builder: (context, model, property) {
-      return RaisedButton(
-        child: Text('$property was changed to ${model.baz}'),
-        onPressed: () {
-          model.baz = DateTime.now().toIso8601String();
-        },
-      );
-    });
+    return PropertyChangeConsumer<Model>(
+      properties: ['baz'],
+      builder: (context, model, property) {
+        return RaisedButton(
+          child: Text('$property was changed to ${model.baz}'),
+          onPressed: () {
+            model.baz = DateTime.now().toIso8601String();
+          },
+        );
+      },
+    );
   }
 }
 

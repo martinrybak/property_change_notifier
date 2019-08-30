@@ -1,6 +1,31 @@
 import 'package:flutter/widgets.dart';
 import 'package:property_change_notifier/property_change_notifier.dart';
 
+/// An [InheritedWidget] that provides access to a [PropertyChangeNotifier] to descendant widgets.
+/// The type parameter [T] is the type of the [PropertyChangeNotifier] subclass.
+/// The [properties] parameter must not be provided if [listen] is false.
+///
+/// A descendant widget can access the model instance by using the following syntax.
+/// This will automatically register the widget to be rebuilt whenever any property changes on the model:
+/// ```dart
+/// final model = PropertyChangeProvider.of<Model>(context).value;
+/// ```
+///
+/// To access the property name that was changed, use the following syntax:
+/// ```dart
+/// final property = PropertyChangeProvider.of<Model>(context).property;
+/// ```
+///
+/// To register the widget to be rebuilt only on specific property changes, provide a [properties] parameter:
+/// ```dart
+/// final model = PropertyChangeProvider.of<Model>(context, properties: ['foo', 'bar']).value;
+/// ```
+///
+/// To access the model with registering the widget to be rebuilt, provide a [listen] parameter with a value of false:
+/// ```dart
+/// final model = PropertyChangeProvider.of<Model>(context, listen: false).value;
+/// ```
+///
 class PropertyChangeProvider<T extends PropertyChangeNotifier> extends StatefulWidget {
   static Type _typeOf<T>() => T;
 
@@ -78,6 +103,11 @@ class _PropertyChangeProviderState<T extends PropertyChangeNotifier> extends Sta
   }
 }
 
+/// The [InheritedModel] subclass that is rebuilt by [_PropertyChangeProviderState]
+/// whenever its [PropertyChangeNotifier] is updated. Notifies dependents when the
+/// name of the changed property is contained in the list of properties provided
+/// when calling the [PropertyChangeProvider.of] method.
+/// The type parameter `T` is the type of the [PropertyChangeNotifier] subclass.
 class PropertyChangeModel<T extends PropertyChangeNotifier> extends InheritedModel {
   final _PropertyChangeProviderState _state;
 
@@ -88,7 +118,10 @@ class PropertyChangeModel<T extends PropertyChangeNotifier> extends InheritedMod
   })  : _state = state,
         super(key: key, child: child);
 
+  /// The instance of [T] originally provided to the [PropertyChangeProvider] constructor.
   T get value => _state.widget.value;
+
+  /// The name of the property that was last changed on the [value] instance.
   Object get property => _state._property;
 
   @override
@@ -102,22 +135,48 @@ class PropertyChangeModel<T extends PropertyChangeNotifier> extends InheritedMod
   }
 }
 
+/// A widget-based listener for cases where a [BuildContext] is hard to access, or if you prefer this kind of API.
+/// To register the widget to be rebuilt only on specific property changes, provide a [properties] parameter.
+///
+/// Access both the model value and the changed property via the [builder] callback:
+/// ```dart
+/// PropertyChangeConsumer<Foo>(
+//    properties: ['bar', 'baz'],
+//    builder: (context, model, property) {
+//      return Column(
+//        children: [
+//          Text('$property was changed!'),
+//          RaisedButton(
+//            child: Text('Update bar'),
+//            onPressed: () {
+//              model.bar = DateTime.now().toString();
+//            },
+//          ),
+//          RaisedButton(
+//            child: Text('Update baz'),
+//            onPressed: () {
+//              model.baz = DateTime.now().toString();
+//            },
+//          ),
+//        ],
+//      );
+//    },
+//  );
+/// ```
 class PropertyChangeConsumer<T extends PropertyChangeNotifier> extends StatelessWidget {
-  final bool listen;
   final Iterable<Object> properties;
   final Widget Function(BuildContext, T, Object) builder;
 
   PropertyChangeConsumer({
     Key key,
     this.properties,
-    this.listen = true,
     @required this.builder,
   })  : assert(builder != null),
         super(key: key);
 
   @override
   Widget build(BuildContext context) {
-    final model = PropertyChangeProvider.of<T>(context, properties: this.properties, listen: this.listen);
+    final model = PropertyChangeProvider.of<T>(context, properties: this.properties, listen: true);
     return this.builder(context, model.value, model.property);
   }
 }
