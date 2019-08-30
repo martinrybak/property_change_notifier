@@ -61,9 +61,11 @@ class PropertyChangeProvider<T extends PropertyChangeNotifier> extends StatefulW
 
   PropertyChangeProvider({
     Key key,
-    this.value,
-    this.child,
-  }) : super(key: key);
+    @required this.value,
+    @required this.child,
+  })  : assert(value != null),
+        assert(child != null),
+        super(key: key);
 
   final Widget child;
   final T value;
