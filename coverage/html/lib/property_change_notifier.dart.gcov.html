@@ -37,7 +37,7 @@
           </tr>
           <tr>
             <td class="headerItem">Date:</td>
-            <td class="headerValue">2019-08-30 13:23:19</td>
+            <td class="headerValue">2019-08-30 16:52:07</td>
             <td></td>
             <td class="headerItem">Functions:</td>
             <td class="headerCovTableEntry">0</td>
@@ -111,15 +111,15 @@
 <a name="49"><span class="lineNum">      49 </span>            :   /// The same [listener] can be added for multiple properties.</a>
 <a name="50"><span class="lineNum">      50 </span>            :   /// Adding the same [listener] for the same property is a no-op.</a>
 <a name="51"><span class="lineNum">      51 </span>            :   /// Adding a [listener] for a non-existent property will not fail, but is functionally pointless.</a>
-<a name="52"><span class="lineNum">      52 </span><span class="lineCov">          1 :   @override</span></a>
+<a name="52"><span class="lineNum">      52 </span><span class="lineCov">          3 :   @override</span></a>
 <a name="53"><span class="lineNum">      53 </span>            :   void addListener(Function listener, [Iterable&lt;T&gt; properties]) {</a>
-<a name="54"><span class="lineNum">      54 </span><span class="lineCov">          1 :     assert(_debugAssertNotDisposed());</span></a>
+<a name="54"><span class="lineNum">      54 </span><span class="lineCov">          3 :     assert(_debugAssertNotDisposed());</span></a>
 <a name="55"><span class="lineNum">      55 </span><span class="lineCov">          1 :     assert(listener != null);</span></a>
-<a name="56"><span class="lineNum">      56 </span><span class="lineCov">          1 :     assert(listener is Function() || listener is Function(T property));</span></a>
+<a name="56"><span class="lineNum">      56 </span><span class="lineCov">          5 :     assert(listener is Function() || listener is Function(T property));</span></a>
 <a name="57"><span class="lineNum">      57 </span>            : </a>
 <a name="58"><span class="lineNum">      58 </span>            :     // Register global listener only</a>
 <a name="59"><span class="lineNum">      59 </span><span class="lineCov">          1 :     if (properties == null || properties.isEmpty) {</span></a>
-<a name="60"><span class="lineNum">      60 </span><span class="lineCov">          2 :       _addListener(_globalListeners, listener);</span></a>
+<a name="60"><span class="lineNum">      60 </span><span class="lineCov">          6 :       _addListener(_globalListeners, listener);</span></a>
 <a name="61"><span class="lineNum">      61 </span>            :       return;</a>
 <a name="62"><span class="lineNum">      62 </span>            :     }</a>
 <a name="63"><span class="lineNum">      63 </span>            : </a>
@@ -137,14 +137,14 @@
 <a name="75"><span class="lineNum">      75 </span>            :   /// Removing a listener will not affect any other properties [listeners] is registered for.</a>
 <a name="76"><span class="lineNum">      76 </span>            :   /// Removing a non-existent listener is no-op.</a>
 <a name="77"><span class="lineNum">      77 </span>            :   /// Removing a listener for a non-existent property will not fail.</a>
-<a name="78"><span class="lineNum">      78 </span><span class="lineCov">          1 :   @override</span></a>
+<a name="78"><span class="lineNum">      78 </span><span class="lineCov">          3 :   @override</span></a>
 <a name="79"><span class="lineNum">      79 </span>            :   void removeListener(Function listener, [Iterable&lt;T&gt; properties]) {</a>
-<a name="80"><span class="lineNum">      80 </span><span class="lineCov">          1 :     assert(_debugAssertNotDisposed());</span></a>
+<a name="80"><span class="lineNum">      80 </span><span class="lineCov">          3 :     assert(_debugAssertNotDisposed());</span></a>
 <a name="81"><span class="lineNum">      81 </span><span class="lineCov">          1 :     assert(listener != null);</span></a>
 <a name="82"><span class="lineNum">      82 </span>            : </a>
 <a name="83"><span class="lineNum">      83 </span>            :     // Remove global listener only</a>
 <a name="84"><span class="lineNum">      84 </span><span class="lineCov">          1 :     if (properties == null || properties.isEmpty) {</span></a>
-<a name="85"><span class="lineNum">      85 </span><span class="lineCov">          2 :       _globalListeners.remove(listener);</span></a>
+<a name="85"><span class="lineNum">      85 </span><span class="lineCov">          6 :       _globalListeners.remove(listener);</span></a>
 <a name="86"><span class="lineNum">      86 </span>            :       return;</a>
 <a name="87"><span class="lineNum">      87 </span>            :     }</a>
 <a name="88"><span class="lineNum">      88 </span>            : </a>
@@ -189,15 +189,15 @@
 <a name="127"><span class="lineNum">     127 </span>            :   /// Listeners for specific properties will only be notified</a>
 <a name="128"><span class="lineNum">     128 </span>            :   /// if [property] is equal (operator==) to one of those properties.</a>
 <a name="129"><span class="lineNum">     129 </span>            :   /// If [property] is not null, must be a single instance of [T] (typically a [String]).</a>
-<a name="130"><span class="lineNum">     130 </span><span class="lineCov">          1 :   @override</span></a>
+<a name="130"><span class="lineNum">     130 </span><span class="lineCov">          3 :   @override</span></a>
 <a name="131"><span class="lineNum">     131 </span>            :   @protected</a>
 <a name="132"><span class="lineNum">     132 </span>            :   @visibleForTesting</a>
 <a name="133"><span class="lineNum">     133 </span>            :   void notifyListeners([T property]) {</a>
-<a name="134"><span class="lineNum">     134 </span><span class="lineCov">          1 :     assert(_debugAssertNotDisposed());</span></a>
-<a name="135"><span class="lineNum">     135 </span><span class="lineCov">          2 :     assert(!(property is Iterable), 'notifyListeners() should only be called for one property at a time');</span></a>
+<a name="134"><span class="lineNum">     134 </span><span class="lineCov">          3 :     assert(_debugAssertNotDisposed());</span></a>
+<a name="135"><span class="lineNum">     135 </span><span class="lineCov">          4 :     assert(!(property is Iterable), 'notifyListeners() should only be called for one property at a time');</span></a>
 <a name="136"><span class="lineNum">     136 </span>            : </a>
 <a name="137"><span class="lineNum">     137 </span>            :     // Always notify global listeners</a>
-<a name="138"><span class="lineNum">     138 </span><span class="lineCov">          2 :     _notifyListeners(_globalListeners, property);</span></a>
+<a name="138"><span class="lineNum">     138 </span><span class="lineCov">          6 :     _notifyListeners(_globalListeners, property);</span></a>
 <a name="139"><span class="lineNum">     139 </span>            : </a>
 <a name="140"><span class="lineNum">     140 </span>            :     // If no property provided, exit</a>
 <a name="141"><span class="lineNum">     141 </span>            :     if (property == null) {</a>
@@ -205,29 +205,29 @@
 <a name="143"><span class="lineNum">     143 </span>            :     }</a>
 <a name="144"><span class="lineNum">     144 </span>            : </a>
 <a name="145"><span class="lineNum">     145 </span>            :     // If listeners exist for this property, notify them.</a>
-<a name="146"><span class="lineNum">     146 </span><span class="lineCov">          2 :     if (_propertyListeners.containsKey(property)) {</span></a>
+<a name="146"><span class="lineNum">     146 </span><span class="lineCov">          6 :     if (_propertyListeners.containsKey(property)) {</span></a>
 <a name="147"><span class="lineNum">     147 </span><span class="lineCov">          3 :       _notifyListeners(_propertyListeners[property], property);</span></a>
 <a name="148"><span class="lineNum">     148 </span>            :     }</a>
 <a name="149"><span class="lineNum">     149 </span>            :   }</a>
 <a name="150"><span class="lineNum">     150 </span>            : </a>
 <a name="151"><span class="lineNum">     151 </span>            :   /// Adds [listener] to [listeners] only if is not already present.</a>
-<a name="152"><span class="lineNum">     152 </span><span class="lineCov">          1 :   void _addListener(ObserverList&lt;Function&gt; listeners, Function listener) {</span></a>
-<a name="153"><span class="lineNum">     153 </span><span class="lineCov">          1 :     if (!listeners.contains(listener)) {</span></a>
-<a name="154"><span class="lineNum">     154 </span><span class="lineCov">          1 :       listeners.add(listener);</span></a>
+<a name="152"><span class="lineNum">     152 </span><span class="lineCov">          3 :   void _addListener(ObserverList&lt;Function&gt; listeners, Function listener) {</span></a>
+<a name="153"><span class="lineNum">     153 </span><span class="lineCov">          3 :     if (!listeners.contains(listener)) {</span></a>
+<a name="154"><span class="lineNum">     154 </span><span class="lineCov">          3 :       listeners.add(listener);</span></a>
 <a name="155"><span class="lineNum">     155 </span>            :     }</a>
 <a name="156"><span class="lineNum">     156 </span>            :   }</a>
 <a name="157"><span class="lineNum">     157 </span>            : </a>
 <a name="158"><span class="lineNum">     158 </span>            :   /// Creates a local copy of [listeners] in case a callback calls</a>
 <a name="159"><span class="lineNum">     159 </span>            :   /// [addListener] or [removeListener] while iterating through the list.</a>
 <a name="160"><span class="lineNum">     160 </span>            :   /// Invokes each listener. If the listener accepts a property parameter, it will be provided.</a>
-<a name="161"><span class="lineNum">     161 </span><span class="lineCov">          1 :   void _notifyListeners(ObserverList&lt;Function&gt; listeners, T property) {</span></a>
-<a name="162"><span class="lineNum">     162 </span><span class="lineCov">          1 :     final localListeners = List&lt;Function&gt;.from(listeners);</span></a>
-<a name="163"><span class="lineNum">     163 </span><span class="lineCov">          2 :     for (final listener in localListeners) {</span></a>
+<a name="161"><span class="lineNum">     161 </span><span class="lineCov">          3 :   void _notifyListeners(ObserverList&lt;Function&gt; listeners, T property) {</span></a>
+<a name="162"><span class="lineNum">     162 </span><span class="lineCov">          3 :     final localListeners = List&lt;Function&gt;.from(listeners);</span></a>
+<a name="163"><span class="lineNum">     163 </span><span class="lineCov">          6 :     for (final listener in localListeners) {</span></a>
 <a name="164"><span class="lineNum">     164 </span>            :       // One last check to make sure the listener hasn't been removed</a>
 <a name="165"><span class="lineNum">     165 </span>            :       // from the original list since the time we made our local copy.</a>
-<a name="166"><span class="lineNum">     166 </span><span class="lineCov">          1 :       if (listeners.contains(listener)) {</span></a>
-<a name="167"><span class="lineNum">     167 </span><span class="lineCov">          1 :         if (listener is Function(T property)) {</span></a>
-<a name="168"><span class="lineNum">     168 </span><span class="lineCov">          1 :           listener(property);</span></a>
+<a name="166"><span class="lineNum">     166 </span><span class="lineCov">          3 :       if (listeners.contains(listener)) {</span></a>
+<a name="167"><span class="lineNum">     167 </span><span class="lineCov">          3 :         if (listener is Function(T property)) {</span></a>
+<a name="168"><span class="lineNum">     168 </span><span class="lineCov">          3 :           listener(property);</span></a>
 <a name="169"><span class="lineNum">     169 </span>            :         } else {</a>
 <a name="170"><span class="lineNum">     170 </span><span class="lineCov">          1 :           listener();</span></a>
 <a name="171"><span class="lineNum">     171 </span>            :         }</a>
@@ -236,14 +236,14 @@
 <a name="174"><span class="lineNum">     174 </span>            :   }</a>
 <a name="175"><span class="lineNum">     175 </span>            : </a>
 <a name="176"><span class="lineNum">     176 </span>            :   /// Reimplemented from [ChangeNotifier].</a>
-<a name="177"><span class="lineNum">     177 </span><span class="lineCov">          1 :   bool _debugAssertNotDisposed() {</span></a>
-<a name="178"><span class="lineNum">     178 </span><span class="lineCov">          1 :     assert(() {</span></a>
-<a name="179"><span class="lineNum">     179 </span><span class="lineCov">          2 :       if (_globalListeners == null || _propertyListeners == null) {</span></a>
+<a name="177"><span class="lineNum">     177 </span><span class="lineCov">          3 :   bool _debugAssertNotDisposed() {</span></a>
+<a name="178"><span class="lineNum">     178 </span><span class="lineCov">          3 :     assert(() {</span></a>
+<a name="179"><span class="lineNum">     179 </span><span class="lineCov">          6 :       if (_globalListeners == null || _propertyListeners == null) {</span></a>
 <a name="180"><span class="lineNum">     180 </span><span class="lineCov">          2 :         throw FlutterError('A $runtimeType was used after being disposed.\n'</span></a>
 <a name="181"><span class="lineNum">     181 </span><span class="lineCov">          1 :             'Once you have called dispose() on a $runtimeType, it can no longer be used.');</span></a>
 <a name="182"><span class="lineNum">     182 </span>            :       }</a>
 <a name="183"><span class="lineNum">     183 </span>            :       return true;</a>
-<a name="184"><span class="lineNum">     184 </span><span class="lineCov">          1 :     }());</span></a>
+<a name="184"><span class="lineNum">     184 </span><span class="lineCov">          3 :     }());</span></a>
 <a name="185"><span class="lineNum">     185 </span>            :     return true;</a>
 <a name="186"><span class="lineNum">     186 </span>            :   }</a>
 <a name="187"><span class="lineNum">     187 </span>            : }</a>
