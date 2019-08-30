@@ -16,7 +16,7 @@ A drop-in replacement for [ChangeNotifier](https://api.flutter.dev/flutter/found
 
 1. Replace `ChangeNotifier` with `PropertyChangeNotifier` in your model.
 1. Update your model to include the property name when calling `notifyListeners()`.
-1. Existing listeners continue to receive all property updates just as before. Over time, update those listeners to only observe specific properties.
+1. When ready, update existing listeners to observe only specific properties.
 
 ## Usage
 
