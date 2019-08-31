@@ -4,147 +4,106 @@ import 'package:property_change_notifier/property_change_provider.dart';
 
 void main() => runApp(MyApp());
 
-class Model with PropertyChangeNotifier<String> {
-  String _bar;
-  String _baz;
+class MyModel with PropertyChangeNotifier<String> {
+  int _foo = 0;
+  int _bar = 0;
 
-  String get bar => _bar;
-  String get baz => _baz;
+  int get foo => _foo;
+  int get bar => _bar;
 
-  set bar(String value) {
+  set foo(int value) {
+    _foo = value;
+    notifyListeners('foo');
+  }
+
+  set bar(int value) {
     _bar = value;
     notifyListeners('bar');
   }
-
-  set baz(String value) {
-    _baz = value;
-    notifyListeners('baz');
-  }
 }
 
-class MyApp extends StatefulWidget {
-  @override
-  _MyAppState createState() => _MyAppState();
-}
-
-class _MyAppState extends State<MyApp> {
-  final _model = Model()
-    ..bar = 'Bar'
-    ..baz = 'Baz';
+class MyApp extends StatelessWidget {
+  final _model = MyModel();
 
   @override
   Widget build(BuildContext context) {
     return MaterialApp(
-      title: 'Flutter Demo',
-      theme: ThemeData(
-        primarySwatch: Colors.blue,
-      ),
+      title: 'Property Change Notifier',
       home: Scaffold(
         body: PropertyChangeProvider(
           value: _model,
-          child: Foo(),
+          child: Center(
+            child: Column(
+              mainAxisSize: MainAxisSize.min,
+              children: <Widget>[
+                GlobalListener(),
+                FooListener(),
+                BarListener(),
+                FooUpdater(),
+                BarUpdater(),
+              ],
+            ),
+          ),
         ),
       ),
     );
   }
 }
 
-class Foo extends StatelessWidget {
-  @override
-  Widget build(BuildContext context) {
-    return Center(
-        child: Column(
-      mainAxisSize: MainAxisSize.min,
-      children: <Widget>[
-        NotListener(),
-        GlobalListener(),
-        MultiListener(),
-        BarListener(),
-        BazListener(),
-        ConsumerListener(),
-      ],
-    ));
-  }
-}
-
-class NotListener extends StatelessWidget {
-  @override
-  Widget build(BuildContext context) {
-    final model = PropertyChangeProvider.of<Model>(context, listen: false);
-    return Text(DateTime.now().toIso8601String());
-  }
-}
-
 class GlobalListener extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
-    final model = PropertyChangeProvider.of<Model>(context);
-    return Text(DateTime.now().toIso8601String());
+    return PropertyChangeConsumer<MyModel>(
+      builder: (context, model, property) {
+        if (property == null) return Container();
+        return Text('$property changed');
+      },
+    );
   }
 }
 
-class MultiListener extends StatelessWidget {
+class FooListener extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
-    final model = PropertyChangeProvider.of<Model>(context, properties: ['bar', 'baz']);
-    return Text('${model.property} was changed');
+    return PropertyChangeConsumer<MyModel>(
+      properties: ['foo'],
+      builder: (context, model, property) {
+        return Text('Foo is ${model.foo}');
+      },
+    );
   }
 }
 
 class BarListener extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
-    final model = PropertyChangeProvider.of<Model>(context, properties: ['bar']).value;
-    return RaisedButton(
-      child: Text(model.bar),
-      onPressed: () {
-        model.bar = DateTime.now().toIso8601String();
-      },
-    );
-  }
-}
-
-class BazListener extends StatelessWidget {
-  @override
-  Widget build(BuildContext context) {
-    return PropertyChangeConsumer<Model>(
-      properties: ['baz'],
+    return PropertyChangeConsumer<MyModel>(
+      properties: ['bar'],
       builder: (context, model, property) {
-        return RaisedButton(
-          child: Text('$property was changed to ${model.baz}'),
-          onPressed: () {
-            model.baz = DateTime.now().toIso8601String();
-          },
-        );
+        return Text('Bar is ${model.bar}');
       },
     );
   }
 }
 
-class ConsumerListener extends StatelessWidget {
+class FooUpdater extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
-    return PropertyChangeConsumer<Model>(
-      properties: ['foo', 'bar'],
-      builder: (context, value, property) {
-        return Column(
-          children: [
-            Text('$property was changed!'),
-            RaisedButton(
-              child: Text('Update bar'),
-              onPressed: () {
-                value.bar = DateTime.now().toString();
-              },
-            ),
-            RaisedButton(
-              child: Text('Update baz'),
-              onPressed: () {
-                value.baz = DateTime.now().toString();
-              },
-            ),
-          ],
-        );
-      },
+    final model = PropertyChangeProvider.of<MyModel>(context, listen: false).value;
+    return RaisedButton(
+      child: Text('Update foo'),
+      onPressed: () => model.foo++
+    );
+  }
+}
+
+class BarUpdater extends StatelessWidget {
+  @override
+  Widget build(BuildContext context) {
+    final model = PropertyChangeProvider.of<MyModel>(context, listen: false).value;
+    return RaisedButton(
+      child: Text('Update bar'),
+        onPressed: () => model.bar++
     );
   }
 }
