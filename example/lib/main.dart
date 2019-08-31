@@ -2,8 +2,6 @@ import 'package:flutter/material.dart';
 import 'package:property_change_notifier/property_change_notifier.dart';
 import 'package:property_change_notifier/property_change_provider.dart';
 
-void main() => runApp(MyApp());
-
 class MyModel with PropertyChangeNotifier<String> {
   int _foo = 0;
   int _bar = 0;
@@ -22,20 +20,20 @@ class MyModel with PropertyChangeNotifier<String> {
   }
 }
 
-class MyApp extends StatelessWidget {
-  final _model = MyModel();
+void main() => runApp(MyApp());
 
+class MyApp extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return MaterialApp(
       title: 'Property Change Notifier',
       home: Scaffold(
         body: PropertyChangeProvider(
-          value: _model,
+          value: MyModel(),
           child: Center(
             child: Column(
               mainAxisSize: MainAxisSize.min,
-              children: <Widget>[
+              children: [
                 GlobalListener(),
                 FooListener(),
                 BarListener(),
@@ -103,7 +101,7 @@ class BarUpdater extends StatelessWidget {
     final model = PropertyChangeProvider.of<MyModel>(context, listen: false).value;
     return RaisedButton(
       child: Text('Update bar'),
-        onPressed: () => model.bar++
+      onPressed: () => model.bar++
     );
   }
 }
