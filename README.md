@@ -291,4 +291,4 @@ Widget build(BuildContext context) {
 
 ## Unit Tests
 
-This library has 100% [test coverage](coverage/index.html).
+This library has 100% [test coverage](coverage/html/index.html).
