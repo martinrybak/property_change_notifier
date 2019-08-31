@@ -45,7 +45,7 @@ class MyModel with PropertyChangeNotifier<String> {
 You can use `PropertyChangeNotifier` as a superclass or a mixin. `<String>` is the generic type of the property you provide to `notifyListeners()`. This is typically a `String` but can be any type.
 
 ### Listening to a single property
-When creating a listener, provide an additional parameter containing the property name you wish to observe, wrapped in an [Iterable](https://api.dartlang.org/stable/2.4.0/dart-core/Iterable-class.html) (typically a [List](https://api.dartlang.org/stable/2.4.0/dart-core/List-class.html)):
+Provide an additional parameter containing the property name you wish to observe, wrapped in an [Iterable](https://api.dartlang.org/stable/2.4.0/dart-core/Iterable-class.html) (typically a [List](https://api.dartlang.org/stable/2.4.0/dart-core/List-class.html)):
 
 ```
 final model = MyModel();
@@ -58,7 +58,7 @@ void _listener() {
 ```
 
 ### Listening to multiple properties
-Create a listener with an additional parameter containing the property names you wish to observe. The listener will be invoked when any of the given properties change. If the listener accepts a property parameter, it will be provided the name of the property that changed. 
+Provide a [Iterable](https://api.dartlang.org/stable/2.4.0/dart-core/Iterable-class.html) containing the property names you wish to observe. The listener will be invoked when any of the given properties change. If the listener accepts a property parameter, it will be provided the name of the property that changed. 
 
 ```
 final model = MyModel();
@@ -147,13 +147,13 @@ It might be more convenient to use enum values for property names. Remember to p
 ```
 // Properties
 enum MyModelProperties {
+  foo,
   bar,
-  baz,
 }
 
 // Model
 class MyModel with PropertyChangeNotifier<MyModelProperties> {
-  set foo(FooProperties value) {
+  set foo(String value) {
     _foo = value;
     notifyListeners(MyModelProperties.foo);
   }
@@ -169,7 +169,7 @@ You can even use your own custom types as property names. They just must extend 
 
 ### Mixin compilation error
 
-If you see the following error when compiling:
+If you are using `PropertyChangeNotifier` as a mixin and see the following compilation error:
 
 ```
 error: The class 'PropertyChangeNotifier' can't be used as a mixin because it extends a class other than Object.
@@ -191,9 +191,11 @@ analyzer:
     mixin_inherits_from_not_object: ignore
 ```    
 
+Or you can use `PropertyChangeNotifier` as a superclass instead (using the `extends` keyword).
+
 ## Usage in Flutter
 
-The `PropertyChangeProvider` widget can be used to expose a `PropertyChangeNotifier` instance to descendant widgets, and automatically rebuild them when only certain properties change. First, create a root `PropertyChangeProvider` widget with an instance of your model:
+`PropertyChangeProvider` can be used to expose a `PropertyChangeNotifier` instance to descendant widgets, and automatically rebuild them when all or certain properties change. First, create a root `PropertyChangeProvider` widget with an instance of your model:
 
 ```
 PropertyChangeProvider(
@@ -202,10 +204,10 @@ PropertyChangeProvider(
 };
 ```
 
-Then, from any descendant widget, listen for changes to all or some properties by using the standard `of()` syntax used with `InheritedWidget`. You can then access either the model itself or its last changed property. Here are a few different examples:
+Then, from any descendant widget, listen for changes to all or some properties by using the standard `of()` syntax typically used with `InheritedWidget`. You can then access either the model itself or its last changed property. Here are a few different examples:
 
 ###Rebuilding when any property changes
-Just call the `of()` method anywhere from your widget, passing in its `BuildContext`.
+Just call the static `of()` method anywhere from your widget, passing in its `BuildContext`.
 
 ```
 @override
