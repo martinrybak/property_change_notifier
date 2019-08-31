@@ -3,7 +3,6 @@ import 'package:property_change_notifier/property_change_notifier.dart';
 
 /// An [InheritedWidget] that provides access to a [PropertyChangeNotifier] to descendant widgets.
 /// The type parameter [T] is the type of the [PropertyChangeNotifier] subclass.
-/// The [properties] parameter must not be provided if [listen] is false.
 ///
 /// A descendant widget can access the model instance by using the following syntax.
 /// This will automatically register the widget to be rebuilt whenever any property changes on the model:
@@ -21,11 +20,16 @@ import 'package:property_change_notifier/property_change_notifier.dart';
 /// final model = PropertyChangeProvider.of<MyModel>(context, properties: ['foo', 'bar']).value;
 /// ```
 ///
-/// To access the model with registering the widget to be rebuilt, provide a [listen] parameter with a value of false:
+/// To access the model without registering the widget to be rebuilt, provide a [listen] parameter with a value of false:
 /// ```dart
 /// final model = PropertyChangeProvider.of<MyModel>(context, listen: false).value;
 /// ```
 class PropertyChangeProvider<T extends PropertyChangeNotifier> extends StatefulWidget {
+  /// Retrieves the [PropertyChangeModel] from the nearest ancestor [PropertyChangeProvider].
+  /// If [listen] is true (which is the default), the calling widget will also be rebuilt
+  /// whenever the ancestor's [PropertyChangeNotifier] model changes. To only rebuild
+  /// for certain properties, provide them in the [properties] parameter.
+  /// If [listen] is false, the [properties] parameter must be null or empty.
   static PropertyChangeModel<T> of<T extends PropertyChangeNotifier>(
     BuildContext context, {
     Iterable<Object> properties,
@@ -57,6 +61,7 @@ class PropertyChangeProvider<T extends PropertyChangeNotifier> extends StatefulW
     return nullCheck(widget);
   }
 
+  /// Creates a [PropertyChangeProvider] that can be accessed by descendant widgets.
   PropertyChangeProvider({
     Key key,
     @required this.value,
