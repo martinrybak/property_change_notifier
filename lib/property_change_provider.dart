@@ -49,14 +49,12 @@ class PropertyChangeProvider<T extends PropertyChangeNotifier> extends StatefulW
       return nullCheck(InheritedModel.inheritFrom<PropertyChangeModel<T>>(context));
     }
 
+    InheritedModel widget;
     for (final property in properties) {
-      final widget = InheritedModel.inheritFrom<PropertyChangeModel<T>>(context, aspect: property);
-      if (property == properties.last) {
-        return nullCheck(widget);
-      }
+      widget = InheritedModel.inheritFrom<PropertyChangeModel<T>>(context, aspect: property);
     }
 
-    return nullCheck(null);
+    return nullCheck(widget);
   }
 
   PropertyChangeProvider({
