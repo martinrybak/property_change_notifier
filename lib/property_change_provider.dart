@@ -65,8 +65,13 @@ class PropertyChangeProvider<T extends PropertyChangeNotifier> extends StatefulW
         assert(child != null),
         super(key: key);
 
-  final Widget child;
+  /// The instance of [T] to provide to descendant widgets.
   final T value;
+
+  /// The widget below this widget in the tree.
+  ///
+  /// {@macro flutter.widgets.child}
+  final Widget child;
 
   @override
   _PropertyChangeProviderState createState() => _PropertyChangeProviderState<T>();
