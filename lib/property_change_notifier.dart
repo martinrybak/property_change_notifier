@@ -2,6 +2,9 @@ library property_change_notifier;
 
 import 'package:flutter/foundation.dart';
 
+/// Signature of callbacks that have 1 argument and return no data.
+typedef PropertyCallback<T> = void Function(T);
+
 /// A backwards-compatible implementation of [ChangeNotifier] that allows
 /// subclasses to provide more granular information to listeners about what
 /// specific property was changed. This lets listeners be much more efficient
@@ -53,7 +56,7 @@ class PropertyChangeNotifier<T extends Object> extends ChangeNotifier {
   void addListener(Function listener, [Iterable<T> properties]) {
     assert(_debugAssertNotDisposed());
     assert(listener != null);
-    assert(listener is Function() || listener is Function(T property));
+    assert(listener is VoidCallback || listener is PropertyCallback<T>, 'Listener must be a Function() or Function(T)');
 
     // Register global listener only
     if (properties == null || properties.isEmpty) {
@@ -164,7 +167,7 @@ class PropertyChangeNotifier<T extends Object> extends ChangeNotifier {
       // One last check to make sure the listener hasn't been removed
       // from the original list since the time we made our local copy.
       if (listeners.contains(listener)) {
-        if (listener is Function(T property)) {
+        if (listener is PropertyCallback<T>) {
           listener(property);
         } else {
           listener();

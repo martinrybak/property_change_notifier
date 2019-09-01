@@ -56,6 +56,12 @@ void main() {
       expect(() => model.addListener(null), throwsAssertionError);
     });
 
+    test('invalid listener throws assertion', () {
+      final listener = (a,b){};
+      final model = PropertyChangeNotifier();
+      expect(() => model.addListener(listener), throwsAssertionError);
+    });
+
     test('empty properties registers global listener', () {
       final listener = expectAsync0(() {}, count: 1);
       final model = PropertyChangeNotifier();
