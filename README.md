@@ -206,7 +206,7 @@ PropertyChangeProvider(
 
 Then, from any descendant widget, listen for changes to all or some properties by using the standard `of()` syntax typically used with `InheritedWidget`. You can then access either the model itself or its last changed property. Here are a few different examples:
 
-###Rebuilding when any property changes
+### Rebuilding when any property changes
 Just call the static `of()` method anywhere from your widget, passing in its `BuildContext`.
 
 ```
