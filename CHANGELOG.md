@@ -1,3 +1,7 @@
+## 0.1.3
+
+* Fixed package declaration
+
 ## 0.1.2
 
 * Updated package structure
