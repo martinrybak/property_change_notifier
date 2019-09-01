@@ -1,3 +1,7 @@
+## 0.1.2
+
+* Updated package structure
+
 ## 0.1.1
 
 * Removed readme from example project
