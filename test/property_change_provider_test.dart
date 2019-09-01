@@ -1,7 +1,7 @@
 import 'package:flutter/widgets.dart';
 import 'package:flutter_test/flutter_test.dart';
-import 'package:property_change_notifier/property_change_notifier.dart';
-import 'package:property_change_notifier/property_change_provider.dart';
+import 'package:property_change_notifier/src/property_change_notifier.dart';
+import 'package:property_change_notifier/src/property_change_provider.dart';
 
 void main() {
   group('Constructor', () {

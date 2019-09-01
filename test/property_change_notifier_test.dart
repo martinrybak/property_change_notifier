@@ -1,5 +1,5 @@
 import 'package:flutter_test/flutter_test.dart';
-import 'package:property_change_notifier/property_change_notifier.dart';
+import 'package:property_change_notifier/src/property_change_notifier.dart';
 
 void main() {
   group('hasListeners', () {

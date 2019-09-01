@@ -1,6 +1,5 @@
 import 'package:flutter/material.dart';
 import 'package:property_change_notifier/property_change_notifier.dart';
-import 'package:property_change_notifier/property_change_provider.dart';
 
 class MyModel with PropertyChangeNotifier<String> {
   int _foo = 0;
