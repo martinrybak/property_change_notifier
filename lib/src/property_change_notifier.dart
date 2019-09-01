@@ -1,5 +1,3 @@
-library property_change_notifier;
-
 import 'package:flutter/foundation.dart';
 
 /// Signature of callbacks that have 1 argument and return no data.
