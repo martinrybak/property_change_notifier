@@ -24,18 +24,18 @@ A drop-in replacement for [ChangeNotifier](https://api.flutter.dev/flutter/found
 
 ```
 class MyModel with PropertyChangeNotifier<String> {
-  String _foo;
-  String _bar;
+  int _foo = 0;
+  int _bar = 0;
 
-  String get foo => _foo;
-  String get bar => _bar;
+  int get foo => _foo;
+  int get bar => _bar;
 
-  set foo(String value) {
+  set foo(int value) {
     _foo = value;
     notifyListeners('foo');
   }
 
-  set bar(String value) {
+  set bar(int value) {
     _bar = value;
     notifyListeners('bar');
   }
@@ -128,7 +128,7 @@ abstract class MyModelProperties {
 
 // Model
 class MyModel with PropertyChangeNotifier<String> {
-  set foo(String value) {
+  set foo(int value) {
     _foo = value;
     notifyListeners(MyModelProperties.foo);
   }
@@ -153,7 +153,7 @@ enum MyModelProperties {
 
 // Model
 class MyModel with PropertyChangeNotifier<MyModelProperties> {
-  set foo(String value) {
+  set foo(int value) {
     _foo = value;
     notifyListeners(MyModelProperties.foo);
   }
