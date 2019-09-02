@@ -27,7 +27,7 @@ void main() {
       final listener = expectAsync3((context, model, property) {
         return Container();
       }, count: 2);
-      final widget = PropertyChangeProvider<PropertyChangeNotifier>(
+      final widget = PropertyChangeProvider(
         value: model,
         child: Builder(
           builder: (context) {
@@ -45,7 +45,7 @@ void main() {
       final listener = expectAsync3((context, model, property) {
         return Container();
       }, count: 2);
-      final widget = PropertyChangeProvider<PropertyChangeNotifier>(
+      final widget = PropertyChangeProvider(
         value: model,
         child: Builder(
           builder: (context) {
@@ -64,7 +64,7 @@ void main() {
         expect(model, _model);
         return Container();
       }, count: 1);
-      final widget = PropertyChangeProvider<PropertyChangeNotifier>(
+      final widget = PropertyChangeProvider(
         value: model,
         child: Builder(
           builder: (context) {
@@ -82,7 +82,7 @@ void main() {
         if (_property != null) expect(property, _property);
         return Container();
       }, count: 2);
-      final widget = PropertyChangeProvider<PropertyChangeNotifier>(
+      final widget = PropertyChangeProvider(
         value: model,
         child: Builder(
           builder: (context) {
@@ -102,7 +102,7 @@ void main() {
       final listener = expectAsync3((context, model, property) {
         return Container();
       }, count: 1);
-      final widget = PropertyChangeProvider<PropertyChangeNotifier>(
+      final widget = PropertyChangeProvider(
         value: model,
         child: Builder(
           builder: (context) {
@@ -120,7 +120,7 @@ void main() {
       final listener = expectAsync3((context, model, property) {
         return Container();
       }, count: 1);
-      final widget = PropertyChangeProvider<PropertyChangeNotifier>(
+      final widget = PropertyChangeProvider(
         value: model,
         child: Builder(
           builder: (context) {
@@ -139,7 +139,7 @@ void main() {
       final listener = expectAsync3((context, model, property) {
         return Container();
       }, count: 2);
-      final widget = PropertyChangeProvider<PropertyChangeNotifier>(
+      final widget = PropertyChangeProvider(
         value: model,
         child: Builder(
           builder: (context) {
@@ -158,7 +158,7 @@ void main() {
         expect(model, _model);
         return Container();
       }, count: 1);
-      final widget = PropertyChangeProvider<PropertyChangeNotifier>(
+      final widget = PropertyChangeProvider(
         value: model,
         child: Builder(
           builder: (context) {
@@ -176,7 +176,7 @@ void main() {
         if (_property != null) expect(property, _property);
         return Container();
       }, count: 2);
-      final widget = PropertyChangeProvider<PropertyChangeNotifier>(
+      final widget = PropertyChangeProvider(
         value: model,
         child: Builder(
           builder: (context) {
