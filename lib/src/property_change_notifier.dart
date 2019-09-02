@@ -4,7 +4,7 @@ import 'package:flutter/foundation.dart';
 typedef PropertyCallback<T> = void Function(T);
 
 /// A backwards-compatible implementation of [ChangeNotifier] that allows
-/// subclasses to provide more granular information to listeners about what
+/// implementers to provide more granular information to listeners about what
 /// specific property was changed. This lets listeners be much more efficient
 /// when responding to model changes. Any number of listeners can subscribe to
 /// any number of properties.
@@ -122,7 +122,7 @@ class PropertyChangeNotifier<T extends Object> extends ChangeNotifier {
   }
 
   /// Notifies the appropriate listeners that [property] was changed.
-  /// Subclasses should ideally provide a [property] parameter.
+  /// Implementers should ideally provide a [property] parameter.
   /// It is only optional for backwards compatibility with [ChangeNotifier].
   /// Global listeners will be notified every time, even if [property] is null.
   /// Listeners for specific properties will only be notified
