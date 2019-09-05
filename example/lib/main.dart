@@ -21,14 +21,21 @@ class MyModel with PropertyChangeNotifier<String> {
 
 void main() => runApp(MyApp());
 
-class MyApp extends StatelessWidget {
+class MyApp extends StatefulWidget {
+  @override
+  _MyAppState createState() => _MyAppState();
+}
+
+class _MyAppState extends State<MyApp> {
+  final model = MyModel();
+
   @override
   Widget build(BuildContext context) {
     return MaterialApp(
       title: 'Property Change Notifier',
       home: Scaffold(
         body: PropertyChangeProvider(
-          value: MyModel(),
+          value: model,
           child: Center(
             child: Column(
               mainAxisSize: MainAxisSize.min,
