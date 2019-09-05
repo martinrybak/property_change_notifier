@@ -1,3 +1,7 @@
+## 0.1.5
+
+* Updated tests and example project
+
 ## 0.1.4
 
 * Readme updates
