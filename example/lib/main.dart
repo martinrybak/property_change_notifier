@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:provider/provider.dart';
 import 'package:property_change_notifier/property_change_notifier.dart';
 
 class MyModel with PropertyChangeNotifier<String> {
@@ -29,8 +30,10 @@ class MyApp extends StatelessWidget {
     return MaterialApp(
       title: 'Property Change Notifier',
       home: Scaffold(
-        body: PropertyChangeProvider(
-          value: model,
+        body: MultiProvider(
+          providers: [
+            PropertyChangeProvider(value: model),
+          ],
           child: Center(
             child: Column(
               mainAxisSize: MainAxisSize.min,

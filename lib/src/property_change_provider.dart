@@ -1,4 +1,5 @@
 import 'package:flutter/widgets.dart';
+import 'package:provider/provider.dart';
 import 'package:property_change_notifier/property_change_notifier.dart';
 
 /// An [InheritedWidget] that provides access to a [PropertyChangeNotifier] to descendant widgets.
@@ -24,7 +25,8 @@ import 'package:property_change_notifier/property_change_notifier.dart';
 /// ```dart
 /// final model = PropertyChangeProvider.of<MyModel>(context, listen: false).value;
 /// ```
-class PropertyChangeProvider<T extends PropertyChangeNotifier> extends StatefulWidget {
+class PropertyChangeProvider<T extends PropertyChangeNotifier> extends StatefulWidget
+    implements SingleChildCloneableWidget {
   /// Retrieves the [PropertyChangeModel] from the nearest ancestor [PropertyChangeProvider].
   /// If [listen] is true (which is the default), the calling widget will also be rebuilt
   /// whenever the ancestor's [PropertyChangeNotifier] model changes. To only rebuild
@@ -65,9 +67,8 @@ class PropertyChangeProvider<T extends PropertyChangeNotifier> extends StatefulW
   PropertyChangeProvider({
     Key key,
     @required this.value,
-    @required this.child,
+    this.child,
   })  : assert(value != null),
-        assert(child != null),
         super(key: key);
 
   /// The instance of [T] to provide to descendant widgets.
@@ -80,6 +81,12 @@ class PropertyChangeProvider<T extends PropertyChangeNotifier> extends StatefulW
 
   @override
   _PropertyChangeProviderState createState() => _PropertyChangeProviderState<T>();
+
+  /// SingleChildCloneableWidget
+
+  SingleChildCloneableWidget cloneWithChild(Widget child) {
+    return PropertyChangeProvider<T>(key: this.key, value: this.value, child: child);
+  }
 }
 
 /// The companion [State] object to [PropertyChangeProvider]. For private use only.
