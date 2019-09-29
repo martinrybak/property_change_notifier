@@ -193,7 +193,7 @@ analyzer:
 
 Or you can use `PropertyChangeNotifier` as a superclass instead (using the `extends` keyword).
 
-## Usage in Flutter
+## Usage with Widgets
 
 `PropertyChangeProvider` can be used to expose a `PropertyChangeNotifier` instance to descendant widgets, and automatically rebuild them when all or certain properties change. First, create a root `PropertyChangeProvider` widget with an instance of your model:
 
