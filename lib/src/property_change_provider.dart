@@ -87,7 +87,7 @@ class PropertyChangeProvider<T extends PropertyChangeNotifier> extends StatefulW
 /// Rebuilds whenever a property is changed and creates a new [PropertyChangeModel] with a reference
 /// to itself so it can access the original model instance and newly changed property name.
 class _PropertyChangeProviderState<T extends PropertyChangeNotifier> extends State<PropertyChangeProvider<T>> {
-  Object _property;
+  Set<Object> _properties;
 
   @override
   void initState() {
@@ -111,8 +111,18 @@ class _PropertyChangeProviderState<T extends PropertyChangeNotifier> extends Sta
 
   void _listener(Object property) {
     setState(() {
-      _property = property;
+      _addProperty(property);
     });
+  }
+
+  void _addProperty(Object property) {
+    final element = this.context as StatefulElement;
+    if (element.dirty) {
+      _properties = _properties ?? {};
+      _properties.add(property);
+    } else {
+      _properties = {property};
+    }
   }
 }
 
@@ -134,8 +144,8 @@ class PropertyChangeModel<T extends PropertyChangeNotifier> extends InheritedMod
   /// The instance of [T] originally provided to the [PropertyChangeProvider] constructor.
   T get value => _state.widget.value;
 
-  /// The name of the property that was last changed on the [value] instance.
-  Object get property => _state._property;
+  /// The name of the last property that was last changed on the [value] instance.
+  Object get property => _state._properties.last;
 
   @override
   bool updateShouldNotify(PropertyChangeModel oldWidget) {
@@ -144,6 +154,6 @@ class PropertyChangeModel<T extends PropertyChangeNotifier> extends InheritedMod
 
   @override
   bool updateShouldNotifyDependent(PropertyChangeModel<T> oldWidget, Set<Object> aspects) {
-    return aspects.contains(_state._property);
+    return aspects.intersection(_state._properties).isNotEmpty;
   }
 }

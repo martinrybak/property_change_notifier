@@ -377,6 +377,44 @@ void main() {
       await tester.pump();
     });
 
+    testWidgets('rebuilds when notifyListeners() is called multiple times with the first property matching', (tester) async {
+      final model = PropertyChangeNotifier();
+      final listener = expectAsync0(() {}, count: 2);
+      final widget = PropertyChangeProvider(
+        value: model,
+        child: Builder(
+          builder: (context) {
+            PropertyChangeProvider.of<PropertyChangeNotifier>(context, properties: ['foo']);
+            return BuildDetector(listener);
+          },
+        ),
+      );
+
+      await tester.pumpWidget(widget);
+      model.notifyListeners('foo');
+      model.notifyListeners('bar');
+      await tester.pump();
+    });
+
+    testWidgets('rebuilds when notifyListeners() is called multiple times with the last property matching', (tester) async {
+      final model = PropertyChangeNotifier();
+      final listener = expectAsync0(() {}, count: 2);
+      final widget = PropertyChangeProvider(
+        value: model,
+        child: Builder(
+          builder: (context) {
+            PropertyChangeProvider.of<PropertyChangeNotifier>(context, properties: ['bar']);
+            return BuildDetector(listener);
+          },
+        ),
+      );
+
+      await tester.pumpWidget(widget);
+      model.notifyListeners('foo');
+      model.notifyListeners('bar');
+      await tester.pump();
+    });
+
     testWidgets('can access model', (tester) async {
       final model = PropertyChangeNotifier();
       final widget = PropertyChangeProvider(
