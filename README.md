@@ -261,7 +261,7 @@ Widget build(BuildContext context) {
 }
 ```
 
-### Accessing the changed propertes
+### Accessing the changed properties
 Useful if you are listening to all or multiple properties and wish to know which ones were changed in the current build frame. Call `properties` on the return value of the `of()` method.
 
 
