@@ -1,6 +1,6 @@
 name: property_change_notifier
 description: A drop-in replacement for ChangeNotifier for observing only certain properties of a model.
-version: 0.1.5
+version: 0.2.0
 author: Martin Rybak <martin.rybak@gmail.com>
 homepage: https://github.com/vgventures/property_change_notifier
 

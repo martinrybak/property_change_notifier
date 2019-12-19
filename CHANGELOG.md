@@ -1,3 +1,7 @@
+## 0.2.0
+
+* Updated `PropertyChangeProvider` to detect all properties changed in the current build frame.
+
 ## 0.1.5
 
 * Updated tests and example project
