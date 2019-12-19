@@ -31,7 +31,7 @@ import 'package:property_change_notifier/property_change_notifier.dart';
 /// ```
 class PropertyChangeConsumer<T extends PropertyChangeNotifier> extends StatelessWidget {
   final Iterable<Object> properties;
-  final Widget Function(BuildContext, T, Object) builder;
+  final Widget Function(BuildContext, T, Set<Object>) builder;
 
   PropertyChangeConsumer({
     Key key,
@@ -43,6 +43,6 @@ class PropertyChangeConsumer<T extends PropertyChangeNotifier> extends Stateless
   @override
   Widget build(BuildContext context) {
     final model = PropertyChangeProvider.of<T>(context, properties: this.properties, listen: true);
-    return this.builder(context, model.value, model.property);
+    return this.builder(context, model.value, model.properties);
   }
 }

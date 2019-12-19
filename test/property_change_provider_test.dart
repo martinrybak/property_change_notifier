@@ -285,7 +285,7 @@ void main() {
       await tester.pump();
     });
 
-    testWidgets('can access changed property when notifyListeners() called with a property', (tester) async {
+    testWidgets('can access changed properties when notifyListeners() called with a property', (tester) async {
       final model = PropertyChangeNotifier();
       final property = 'foo';
       final widget = PropertyChangeProvider(
@@ -293,7 +293,7 @@ void main() {
         child: Builder(
           builder: (context) {
             final provider = PropertyChangeProvider.of<PropertyChangeNotifier>(context);
-            if (provider.property != null) expect(provider.property, property);
+            if (provider.properties.isNotEmpty) expect(provider.properties.contains(property), isTrue);
             return Container();
           },
         ),
@@ -440,7 +440,7 @@ void main() {
         child: Builder(
           builder: (context) {
             final provider = PropertyChangeProvider.of<PropertyChangeNotifier>(context, properties: [property]);
-            if (provider.property != null) expect(provider.property, property);
+            if (provider.properties.isNotEmpty) expect(provider.properties.contains(property), isTrue);
             return Container();
           },
         ),
