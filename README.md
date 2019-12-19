@@ -42,7 +42,7 @@ class MyModel with PropertyChangeNotifier<String> {
 }
 ```
 
-You can use `PropertyChangeNotifier` as a superclass or a mixin. `<String>` is the generic type of the property you provide to `notifyListeners()`. This is typically a `String` but can be any type.
+You can use `PropertyChangeNotifier` as a superclass or a mixin. Just indicate the generic type of the property you provide to `notifyListeners()`. This is typically a `String` but can be any type.
 
 ### Listening to a single property
 Provide an additional parameter containing the property name you wish to observe, wrapped in an [Iterable](https://api.dartlang.org/stable/2.4.0/dart-core/Iterable-class.html) (typically a [List](https://api.dartlang.org/stable/2.4.0/dart-core/List-class.html)):
@@ -195,7 +195,7 @@ Or you can use `PropertyChangeNotifier` as a superclass instead (using the `exte
 
 ## Usage with Widgets
 
-`PropertyChangeProvider` can be used to expose a `PropertyChangeNotifier` instance to descendant widgets, and automatically rebuild them when all or certain properties change. First, create a root `PropertyChangeProvider` widget with an instance of your model:
+`PropertyChangeProvider` can be used to expose a `PropertyChangeNotifier` instance to descendant widgets, and optionally rebuild them when all or certain properties change. First, create a root `PropertyChangeProvider` widget with an instance of your model:
 
 ```
 PropertyChangeProvider(
