@@ -4,14 +4,14 @@ import 'package:property_change_notifier/property_change_notifier.dart';
 /// A widget-based listener for cases where a [BuildContext] is hard to access, or if you prefer this kind of API.
 /// To register the widget to be rebuilt only on specific property changes, provide a [properties] parameter.
 ///
-/// Access both the model value and the changed property via the [builder] callback:
+/// Access both the model value and the changed properties via the [builder] callback:
 /// ```dart
 /// PropertyChangeConsumer<MyModel>(
 ///    properties: ['foo', 'bar'],
-///    builder: (context, model, property) {
+///    builder: (context, model, properties) {
 ///      return Column(
 ///        children: [
-///          Text('$property was changed!'),
+///          Text('$properties were changed!'),
 ///          RaisedButton(
 ///            child: Text('Update foo'),
 ///            onPressed: () {

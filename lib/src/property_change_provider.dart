@@ -10,7 +10,7 @@ import 'package:property_change_notifier/property_change_notifier.dart';
 /// final model = PropertyChangeProvider.of<MyModel>(context).value;
 /// ```
 ///
-/// To access the property names that were changed in the current build frame, use the following syntax.
+/// To access the properties that were changed in the current build frame, use the following syntax.
 /// ```dart
 /// final properties = PropertyChangeProvider.of<MyModel>(context).properties;
 /// ```
@@ -128,7 +128,7 @@ class _PropertyChangeProviderState<T extends PropertyChangeNotifier> extends Sta
 /// The [InheritedModel] subclass that is rebuilt by [_PropertyChangeProviderState]
 /// whenever its [PropertyChangeNotifier] is updated. Notifies dependents when the
 /// names of the changed properties intersect with the list of properties provided
-/// when the widgets originally called the [PropertyChangeProvider].[of] method.
+/// to the [PropertyChangeProvider].[of] method.
 /// The type parameter [T] is the type of the [PropertyChangeNotifier] subclass.
 class PropertyChangeModel<T extends PropertyChangeNotifier> extends InheritedModel {
   final _PropertyChangeProviderState _state;
@@ -143,7 +143,7 @@ class PropertyChangeModel<T extends PropertyChangeNotifier> extends InheritedMod
   /// The instance of [T] originally provided to the [PropertyChangeProvider] constructor.
   T get value => _state.widget.value;
 
-  /// The names of the properties that were last changed on the [value] instance.
+  /// The names of the properties on the [value] instance that were changed in the current build frame.
   Set<Object> get properties => _state._properties;
 
   @override
