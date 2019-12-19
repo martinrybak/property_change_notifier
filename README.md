@@ -261,27 +261,27 @@ Widget build(BuildContext context) {
 }
 ```
 
-### Accessing the last changed property
-Useful if you are listening to all or multiple properties and wish to know which property was changed. Call `property` on the return value of the `of()` method.
+### Accessing the changed propertes
+Useful if you are listening to all or multiple properties and wish to know which ones were changed in the current build frame. Call `properties` on the return value of the `of()` method.
 
 
 ```
 @override
 Widget build(BuildContext context) {
-  final property = PropertyChangeProvider.of<MyModel>(context).property;
+  final properties = PropertyChangeProvider.of<MyModel>(context).properties;
   ...
 }
 ```
 
 ### Accessing as a widget
-`PropertyChangeConsumer` is a widget-based listener for cases where a `BuildContext` is hard to access, or if you prefer this kind of API. You can access both the model value and the last changed property via the `builder` callback:
+`PropertyChangeConsumer` is a widget-based listener for cases where a `BuildContext` is hard to access, or if you prefer this kind of API. You can access both the model value and the changed properties via the `builder` callback:
 
 ```
 @override
 Widget build(BuildContext context) {
   return PropertyChangeConsumer<MyModel>(
     properties: ['foo', 'bar'],
-    builder: (context, model, property) {
+    builder: (context, model, properties) {
       ...
     },
   );
