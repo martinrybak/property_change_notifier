@@ -13,7 +13,7 @@ void main() {
 
   testWidgets('throws assertion error if ancestor PropertyChangeProvider not found', (tester) async {
     final widget = Builder(builder: (context) {
-      return PropertyChangeConsumer<PropertyChangeNotifier>(builder: (context, model, property) {
+      return PropertyChangeConsumer<PropertyChangeNotifier>(builder: (context, model, properties) {
         return Container();
       });
     });
@@ -24,7 +24,7 @@ void main() {
   group('consumer without properties', () {
     testWidgets('is rebuilt when notifyListeners() is called without a property', (tester) async {
       final model = PropertyChangeNotifier();
-      final listener = expectAsync3((context, model, property) {
+      final listener = expectAsync3((context, model, properties) {
         return Container();
       }, count: 2);
       final widget = PropertyChangeProvider(
@@ -42,7 +42,7 @@ void main() {
 
     testWidgets('is rebuilt when notifyListeners() is called with a property', (tester) async {
       final model = PropertyChangeNotifier();
-      final listener = expectAsync3((context, model, property) {
+      final listener = expectAsync3((context, model, properties) {
         return Container();
       }, count: 2);
       final widget = PropertyChangeProvider(
@@ -78,8 +78,8 @@ void main() {
     testWidgets('provides changed property to builder', (tester) async {
       final model = PropertyChangeNotifier();
       final property = 'foo';
-      final listener = expectAsync3((context, model, _property) {
-        if (_property != null) expect(property, _property);
+      final listener = expectAsync3((context, model, properties) {
+        if (properties.isNotEmpty) expect(properties.contains(property), isTrue);
         return Container();
       }, count: 2);
       final widget = PropertyChangeProvider(
@@ -99,7 +99,7 @@ void main() {
   group('consumer with properties', () {
     testWidgets('is not rebuilt when notifyListeners() is called without a property', (tester) async {
       final model = PropertyChangeNotifier();
-      final listener = expectAsync3((context, model, property) {
+      final listener = expectAsync3((context, model, properties) {
         return Container();
       }, count: 1);
       final widget = PropertyChangeProvider(
@@ -117,7 +117,7 @@ void main() {
 
     testWidgets('is not rebuilt when notifyListeners() is called with a non-matching property', (tester) async {
       final model = PropertyChangeNotifier();
-      final listener = expectAsync3((context, model, property) {
+      final listener = expectAsync3((context, model, properties) {
         return Container();
       }, count: 1);
       final widget = PropertyChangeProvider(
@@ -136,7 +136,7 @@ void main() {
     testWidgets('is rebuilt when notifyListeners() is called with a matching property', (tester) async {
       final model = PropertyChangeNotifier();
       final property = 'foo';
-      final listener = expectAsync3((context, model, property) {
+      final listener = expectAsync3((context, model, properties) {
         return Container();
       }, count: 2);
       final widget = PropertyChangeProvider(
@@ -172,8 +172,8 @@ void main() {
     testWidgets('provides changed property to builder', (tester) async {
       final model = PropertyChangeNotifier();
       final property = 'foo';
-      final listener = expectAsync3((context, model, _property) {
-        if (_property != null) expect(property, _property);
+      final listener = expectAsync3((context, model, properties) {
+        if (properties.isNotEmpty) expect(properties.contains(property), isTrue);
         return Container();
       }, count: 2);
       final widget = PropertyChangeProvider(
