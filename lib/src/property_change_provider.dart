@@ -145,7 +145,7 @@ class PropertyChangeModel<T extends PropertyChangeNotifier> extends InheritedMod
   T get value => _state.widget.value;
 
   /// The name of the last property that was last changed on the [value] instance.
-  Object get property => _state._properties.last;
+  Object get property => _state._properties?.last;
 
   @override
   bool updateShouldNotify(PropertyChangeModel oldWidget) {
