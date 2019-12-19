@@ -31,13 +31,13 @@
             <td class="headerValue">lcov.info</td>
             <td></td>
             <td class="headerItem">Lines:</td>
-            <td class="headerCovTableEntry">37</td>
-            <td class="headerCovTableEntry">37</td>
+            <td class="headerCovTableEntry">42</td>
+            <td class="headerCovTableEntry">42</td>
             <td class="headerCovTableEntryHi">100.0 %</td>
           </tr>
           <tr>
             <td class="headerItem">Date:</td>
-            <td class="headerValue">2019-09-05 06:53:31</td>
+            <td class="headerValue">2019-12-19 10:35:55</td>
             <td></td>
             <td class="headerItem">Functions:</td>
             <td class="headerCovTableEntry">0</td>
@@ -72,9 +72,9 @@
 <a name="10"><span class="lineNum">      10 </span>            : /// final model = PropertyChangeProvider.of&lt;MyModel&gt;(context).value;</a>
 <a name="11"><span class="lineNum">      11 </span>            : /// ```</a>
 <a name="12"><span class="lineNum">      12 </span>            : ///</a>
-<a name="13"><span class="lineNum">      13 </span>            : /// To access the property name that was changed, use the following syntax:</a>
+<a name="13"><span class="lineNum">      13 </span>            : /// To access the properties that were changed in the current build frame, use the following syntax.</a>
 <a name="14"><span class="lineNum">      14 </span>            : /// ```dart</a>
-<a name="15"><span class="lineNum">      15 </span>            : /// final property = PropertyChangeProvider.of&lt;MyModel&gt;(context).property;</a>
+<a name="15"><span class="lineNum">      15 </span>            : /// final properties = PropertyChangeProvider.of&lt;MyModel&gt;(context).properties;</a>
 <a name="16"><span class="lineNum">      16 </span>            : /// ```</a>
 <a name="17"><span class="lineNum">      17 </span>            : ///</a>
 <a name="18"><span class="lineNum">      18 </span>            : /// To register the widget to be rebuilt only on specific property changes, provide a [properties] parameter:</a>
@@ -147,9 +147,9 @@
 <a name="85"><span class="lineNum">      85 </span>            : /// The companion [State] object to [PropertyChangeProvider]. For private use only.</a>
 <a name="86"><span class="lineNum">      86 </span>            : /// Subscribes as a global listener to the [PropertyChangeNotifier] instance at [widget].[value].</a>
 <a name="87"><span class="lineNum">      87 </span>            : /// Rebuilds whenever a property is changed and creates a new [PropertyChangeModel] with a reference</a>
-<a name="88"><span class="lineNum">      88 </span>            : /// to itself so it can access the original model instance and newly changed property name.</a>
+<a name="88"><span class="lineNum">      88 </span>            : /// to itself so it can access the original model instance and changed property names.</a>
 <a name="89"><span class="lineNum">      89 </span>            : class _PropertyChangeProviderState&lt;T extends PropertyChangeNotifier&gt; extends State&lt;PropertyChangeProvider&lt;T&gt;&gt; {</a>
-<a name="90"><span class="lineNum">      90 </span>            :   Object _property;</a>
+<a name="90"><span class="lineNum">      90 </span>            :   Set&lt;Object&gt; _properties = {};</a>
 <a name="91"><span class="lineNum">      91 </span>            : </a>
 <a name="92"><span class="lineNum">      92 </span><span class="lineCov">          2 :   @override</span></a>
 <a name="93"><span class="lineNum">      93 </span>            :   void initState() {</a>
@@ -173,42 +173,51 @@
 <a name="111"><span class="lineNum">     111 </span>            : </a>
 <a name="112"><span class="lineNum">     112 </span><span class="lineCov">          2 :   void _listener(Object property) {</span></a>
 <a name="113"><span class="lineNum">     113 </span><span class="lineCov">          4 :     setState(() {</span></a>
-<a name="114"><span class="lineNum">     114 </span><span class="lineCov">          2 :       _property = property;</span></a>
+<a name="114"><span class="lineNum">     114 </span><span class="lineCov">          2 :       _addProperty(property);</span></a>
 <a name="115"><span class="lineNum">     115 </span>            :     });</a>
 <a name="116"><span class="lineNum">     116 </span>            :   }</a>
-<a name="117"><span class="lineNum">     117 </span>            : }</a>
-<a name="118"><span class="lineNum">     118 </span>            : </a>
-<a name="119"><span class="lineNum">     119 </span>            : /// The [InheritedModel] subclass that is rebuilt by [_PropertyChangeProviderState]</a>
-<a name="120"><span class="lineNum">     120 </span>            : /// whenever its [PropertyChangeNotifier] is updated. Notifies dependents when the</a>
-<a name="121"><span class="lineNum">     121 </span>            : /// name of the changed property is contained in the list of properties provided</a>
-<a name="122"><span class="lineNum">     122 </span>            : /// when the widgets originally called the [PropertyChangeProvider].[of] method.</a>
-<a name="123"><span class="lineNum">     123 </span>            : /// The type parameter [T] is the type of the [PropertyChangeNotifier] subclass.</a>
-<a name="124"><span class="lineNum">     124 </span>            : class PropertyChangeModel&lt;T extends PropertyChangeNotifier&gt; extends InheritedModel {</a>
-<a name="125"><span class="lineNum">     125 </span>            :   final _PropertyChangeProviderState _state;</a>
-<a name="126"><span class="lineNum">     126 </span>            : </a>
-<a name="127"><span class="lineNum">     127 </span><span class="lineCov">          2 :   PropertyChangeModel({</span></a>
-<a name="128"><span class="lineNum">     128 </span>            :     Key key,</a>
-<a name="129"><span class="lineNum">     129 </span>            :     _PropertyChangeProviderState state,</a>
-<a name="130"><span class="lineNum">     130 </span>            :     Widget child,</a>
-<a name="131"><span class="lineNum">     131 </span>            :   })  : _state = state,</a>
-<a name="132"><span class="lineNum">     132 </span><span class="lineCov">          2 :         super(key: key, child: child);</span></a>
-<a name="133"><span class="lineNum">     133 </span>            : </a>
-<a name="134"><span class="lineNum">     134 </span>            :   /// The instance of [T] originally provided to the [PropertyChangeProvider] constructor.</a>
-<a name="135"><span class="lineNum">     135 </span><span class="lineCov">          8 :   T get value =&gt; _state.widget.value;</span></a>
-<a name="136"><span class="lineNum">     136 </span>            : </a>
-<a name="137"><span class="lineNum">     137 </span>            :   /// The name of the property that was last changed on the [value] instance.</a>
-<a name="138"><span class="lineNum">     138 </span><span class="lineCov">          6 :   Object get property =&gt; _state._property;</span></a>
-<a name="139"><span class="lineNum">     139 </span>            : </a>
-<a name="140"><span class="lineNum">     140 </span><span class="lineCov">          2 :   @override</span></a>
-<a name="141"><span class="lineNum">     141 </span>            :   bool updateShouldNotify(PropertyChangeModel oldWidget) {</a>
-<a name="142"><span class="lineNum">     142 </span>            :     return true;</a>
-<a name="143"><span class="lineNum">     143 </span>            :   }</a>
-<a name="144"><span class="lineNum">     144 </span>            : </a>
-<a name="145"><span class="lineNum">     145 </span><span class="lineCov">          2 :   @override</span></a>
-<a name="146"><span class="lineNum">     146 </span>            :   bool updateShouldNotifyDependent(PropertyChangeModel&lt;T&gt; oldWidget, Set&lt;Object&gt; aspects) {</a>
-<a name="147"><span class="lineNum">     147 </span><span class="lineCov">          6 :     return aspects.contains(_state._property);</span></a>
-<a name="148"><span class="lineNum">     148 </span>            :   }</a>
-<a name="149"><span class="lineNum">     149 </span>            : }</a>
+<a name="117"><span class="lineNum">     117 </span>            : </a>
+<a name="118"><span class="lineNum">     118 </span><span class="lineCov">          2 :   void _addProperty(Object property) {</span></a>
+<a name="119"><span class="lineNum">     119 </span><span class="lineCov">          2 :     final element = this.context as StatefulElement;</span></a>
+<a name="120"><span class="lineNum">     120 </span><span class="lineCov">          2 :     if (element.dirty) {</span></a>
+<a name="121"><span class="lineNum">     121 </span><span class="lineCov">          2 :       _properties.add(property);</span></a>
+<a name="122"><span class="lineNum">     122 </span>            :     } else {</a>
+<a name="123"><span class="lineNum">     123 </span><span class="lineCov">          2 :       _properties = {property};</span></a>
+<a name="124"><span class="lineNum">     124 </span>            :     }</a>
+<a name="125"><span class="lineNum">     125 </span>            :   }</a>
+<a name="126"><span class="lineNum">     126 </span>            : }</a>
+<a name="127"><span class="lineNum">     127 </span>            : </a>
+<a name="128"><span class="lineNum">     128 </span>            : /// The [InheritedModel] subclass that is rebuilt by [_PropertyChangeProviderState]</a>
+<a name="129"><span class="lineNum">     129 </span>            : /// whenever its [PropertyChangeNotifier] is updated. Notifies dependents when the</a>
+<a name="130"><span class="lineNum">     130 </span>            : /// names of the changed properties intersect with the list of properties provided</a>
+<a name="131"><span class="lineNum">     131 </span>            : /// to the [PropertyChangeProvider].[of] method.</a>
+<a name="132"><span class="lineNum">     132 </span>            : /// The type parameter [T] is the type of the [PropertyChangeNotifier] subclass.</a>
+<a name="133"><span class="lineNum">     133 </span>            : class PropertyChangeModel&lt;T extends PropertyChangeNotifier&gt; extends InheritedModel {</a>
+<a name="134"><span class="lineNum">     134 </span>            :   final _PropertyChangeProviderState _state;</a>
+<a name="135"><span class="lineNum">     135 </span>            : </a>
+<a name="136"><span class="lineNum">     136 </span><span class="lineCov">          2 :   PropertyChangeModel({</span></a>
+<a name="137"><span class="lineNum">     137 </span>            :     Key key,</a>
+<a name="138"><span class="lineNum">     138 </span>            :     _PropertyChangeProviderState state,</a>
+<a name="139"><span class="lineNum">     139 </span>            :     Widget child,</a>
+<a name="140"><span class="lineNum">     140 </span>            :   })  : _state = state,</a>
+<a name="141"><span class="lineNum">     141 </span><span class="lineCov">          2 :         super(key: key, child: child);</span></a>
+<a name="142"><span class="lineNum">     142 </span>            : </a>
+<a name="143"><span class="lineNum">     143 </span>            :   /// The instance of [T] originally provided to the [PropertyChangeProvider] constructor.</a>
+<a name="144"><span class="lineNum">     144 </span><span class="lineCov">          8 :   T get value =&gt; _state.widget.value;</span></a>
+<a name="145"><span class="lineNum">     145 </span>            : </a>
+<a name="146"><span class="lineNum">     146 </span>            :   /// The names of the properties on the [value] instance that were changed in the current build frame.</a>
+<a name="147"><span class="lineNum">     147 </span><span class="lineCov">          6 :   Set&lt;Object&gt; get properties =&gt; _state._properties;</span></a>
+<a name="148"><span class="lineNum">     148 </span>            : </a>
+<a name="149"><span class="lineNum">     149 </span><span class="lineCov">          2 :   @override</span></a>
+<a name="150"><span class="lineNum">     150 </span>            :   bool updateShouldNotify(PropertyChangeModel oldWidget) {</a>
+<a name="151"><span class="lineNum">     151 </span>            :     return true;</a>
+<a name="152"><span class="lineNum">     152 </span>            :   }</a>
+<a name="153"><span class="lineNum">     153 </span>            : </a>
+<a name="154"><span class="lineNum">     154 </span><span class="lineCov">          2 :   @override</span></a>
+<a name="155"><span class="lineNum">     155 </span>            :   bool updateShouldNotifyDependent(PropertyChangeModel&lt;T&gt; oldWidget, Set&lt;Object&gt; aspects) {</a>
+<a name="156"><span class="lineNum">     156 </span><span class="lineCov">          8 :     return aspects.intersection(_state._properties).isNotEmpty;</span></a>
+<a name="157"><span class="lineNum">     157 </span>            :   }</a>
+<a name="158"><span class="lineNum">     158 </span>            : }</a>
 </pre>
       </td>
     </tr>
