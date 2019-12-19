@@ -40,6 +40,7 @@ class MyApp extends StatelessWidget {
                 BarListener(),
                 FooUpdater(),
                 BarUpdater(),
+                BothUpdater(),
               ],
             ),
           ),
@@ -53,9 +54,9 @@ class GlobalListener extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return PropertyChangeConsumer<MyModel>(
-      builder: (context, model, property) {
-        if (property == null) return Container();
-        return Text('$property changed');
+      builder: (context, model, properties) {
+        if (properties.isEmpty) return Container();
+        return Text('$properties changed');
       },
     );
   }
@@ -66,7 +67,7 @@ class FooListener extends StatelessWidget {
   Widget build(BuildContext context) {
     return PropertyChangeConsumer<MyModel>(
       properties: ['foo'],
-      builder: (context, model, property) {
+      builder: (context, model, properties) {
         return Text('Foo is ${model.foo}');
       },
     );
@@ -78,7 +79,7 @@ class BarListener extends StatelessWidget {
   Widget build(BuildContext context) {
     return PropertyChangeConsumer<MyModel>(
       properties: ['bar'],
-      builder: (context, model, property) {
+      builder: (context, model, properties) {
         return Text('Bar is ${model.bar}');
       },
     );
@@ -103,6 +104,20 @@ class BarUpdater extends StatelessWidget {
     return RaisedButton(
       child: Text('Update bar'),
       onPressed: () => model.bar++
+    );
+  }
+}
+
+class BothUpdater extends StatelessWidget {
+  @override
+  Widget build(BuildContext context) {
+    final model = PropertyChangeProvider.of<MyModel>(context, listen: false).value;
+    return RaisedButton(
+        child: Text('Update both'),
+        onPressed: () {
+          model.foo++;
+          model.bar++;
+        }
     );
   }
 }
