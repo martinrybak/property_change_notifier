@@ -37,23 +37,20 @@ class PropertyChangeProvider<T extends PropertyChangeNotifier> extends StatefulW
   }) {
     assert(listen || properties == null, "Don't provide properties if you're not going to listen to them.");
 
-    final typeOf = <T>() => T;
-
-    final nullCheck = (InheritedModel model) {
+    PropertyChangeModel<T> nullCheck(PropertyChangeModel<T> model) {
       assert(model != null, 'Could not find an ancestor PropertyChangeProvider<$T>');
       return model;
     };
 
     if (!listen) {
-      final type = typeOf<PropertyChangeModel<T>>();
-      return nullCheck(context.ancestorWidgetOfExactType(type) as PropertyChangeModel);
+      return nullCheck(context.findAncestorWidgetOfExactType<PropertyChangeModel<T>>());
     }
 
     if (properties == null || properties.isEmpty) {
       return nullCheck(InheritedModel.inheritFrom<PropertyChangeModel<T>>(context));
     }
 
-    InheritedModel widget;
+    PropertyChangeModel<T> widget;
     for (final property in properties) {
       widget = InheritedModel.inheritFrom<PropertyChangeModel<T>>(context, aspect: property);
     }
@@ -131,11 +128,11 @@ class _PropertyChangeProviderState<T extends PropertyChangeNotifier> extends Sta
 /// to the [PropertyChangeProvider].[of] method.
 /// The type parameter [T] is the type of the [PropertyChangeNotifier] subclass.
 class PropertyChangeModel<T extends PropertyChangeNotifier> extends InheritedModel {
-  final _PropertyChangeProviderState _state;
+  final _PropertyChangeProviderState<T> _state;
 
   const PropertyChangeModel({
     Key key,
-    _PropertyChangeProviderState state,
+    _PropertyChangeProviderState<T> state,
     Widget child,
   })  : _state = state,
         super(key: key, child: child);
