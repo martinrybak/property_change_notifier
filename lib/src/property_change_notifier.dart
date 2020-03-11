@@ -133,7 +133,7 @@ class PropertyChangeNotifier<T extends Object> extends ChangeNotifier {
   @visibleForTesting
   void notifyListeners([T property]) {
     assert(_debugAssertNotDisposed());
-    assert(!(property is Iterable), 'notifyListeners() should only be called for one property at a time');
+    assert(property is! Iterable, 'notifyListeners() should only be called for one property at a time');
 
     // Always notify global listeners
     _notifyListeners(_globalListeners, property);
