@@ -62,7 +62,7 @@ class PropertyChangeProvider<T extends PropertyChangeNotifier> extends StatefulW
   }
 
   /// Creates a [PropertyChangeProvider] that can be accessed by descendant widgets.
-  PropertyChangeProvider({
+  const PropertyChangeProvider({
     Key key,
     @required this.value,
     @required this.child,
@@ -133,7 +133,7 @@ class _PropertyChangeProviderState<T extends PropertyChangeNotifier> extends Sta
 class PropertyChangeModel<T extends PropertyChangeNotifier> extends InheritedModel {
   final _PropertyChangeProviderState _state;
 
-  PropertyChangeModel({
+  const PropertyChangeModel({
     Key key,
     _PropertyChangeProviderState state,
     Widget child,

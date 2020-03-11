@@ -35,7 +35,7 @@ class PropertyChangeConsumer<T extends PropertyChangeNotifier> extends Stateless
   final Iterable<Object> properties;
   final PropertyChangeBuilder<T> builder;
 
-  PropertyChangeConsumer({
+  const PropertyChangeConsumer({
     Key key,
     this.properties,
     @required this.builder,
