@@ -32,19 +32,18 @@ typedef PropertyChangeBuilder<T> = Widget Function(BuildContext, T, Set<Object>)
 ///  );
 /// ```
 class PropertyChangeConsumer<T extends PropertyChangeNotifier> extends StatelessWidget {
-  final Iterable<Object> properties;
+  final Iterable<Object>? properties;
   final PropertyChangeBuilder<T> builder;
 
   const PropertyChangeConsumer({
-    Key key,
+    Key? key,
     this.properties,
-    @required this.builder,
-  })  : assert(builder != null),
-        super(key: key);
+    required this.builder,
+  }) : super(key: key);
 
   @override
   Widget build(BuildContext context) {
-    final model = PropertyChangeProvider.of<T>(context, properties: this.properties, listen: true);
-    return this.builder(context, model.value, model.properties);
+    final model = PropertyChangeProvider.of<T>(context, properties: properties, listen: true);
+    return builder(context, model.value, model.properties);
   }
 }

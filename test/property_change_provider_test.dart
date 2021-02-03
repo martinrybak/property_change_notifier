@@ -4,29 +4,6 @@ import 'package:property_change_notifier/src/property_change_notifier.dart';
 import 'package:property_change_notifier/src/property_change_provider.dart';
 
 void main() {
-  group('Constructor', () {
-    testWidgets('throws assertion error if value is null', (tester) async {
-      final widget = Builder(builder: (context) {
-        return PropertyChangeProvider(
-          value: null,
-          child: Container(),
-        );
-      });
-      await tester.pumpWidget(widget);
-      expect(tester.takeException(), isAssertionError);
-    });
-
-    testWidgets('throws assertion error if child is null', (tester) async {
-      final widget = Builder(builder: (context) {
-        return PropertyChangeProvider(
-          value: PropertyChangeNotifier(),
-          child: null,
-        );
-      });
-      await tester.pumpWidget(widget);
-      expect(tester.takeException(), isAssertionError);
-    });
-  });
 
   group('Ancestor tests', () {
     testWidgets('throws assertion error if ancestor not found', (tester) async {

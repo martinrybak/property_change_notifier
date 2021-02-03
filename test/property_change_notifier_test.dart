@@ -45,16 +45,6 @@ void main() {
   });
 
   group('addListener()', () {
-    test('invoking after dispose() throws assertion', () {
-      final model = PropertyChangeNotifier();
-      model.dispose();
-      expect(() => model.addListener(null), throwsAssertionError);
-    });
-
-    test('null listener throws assertion', () {
-      final model = PropertyChangeNotifier();
-      expect(() => model.addListener(null), throwsAssertionError);
-    });
 
     test('invalid listener throws assertion', () {
       final listener = (a,b){};
@@ -86,16 +76,6 @@ void main() {
   });
 
   group('removeListener()', () {
-    test('invoking after dispose() throws assertion', () {
-      final model = PropertyChangeNotifier();
-      model.dispose();
-      expect(() => model.removeListener(null), throwsAssertionError);
-    });
-
-    test('null listener throws assertion', () {
-      final model = PropertyChangeNotifier();
-      expect(() => model.removeListener(null), throwsAssertionError);
-    });
 
     test('non-existent listener with no properties returns normally', () {
       final model = PropertyChangeNotifier();

@@ -1,11 +1,11 @@
 name: property_change_notifier
 description: A drop-in replacement for ChangeNotifier for observing only certain properties of a model.
-version: 0.2.0
+version: 0.3.0-nullsafety.1
 author: Martin Rybak <martin.rybak@gmail.com>
 homepage: https://github.com/vgventures/property_change_notifier
 
 environment:
-  sdk: ">=2.2.0 <3.0.0"
+  sdk: ">=2.12.0-0 <3.0.0"
 
 dependencies:
   flutter:
@@ -14,7 +14,7 @@ dependencies:
 dev_dependencies:
   flutter_test:
     sdk: flutter
-  pedantic: ^1.7.0                  # Static analysis rules
+  pedantic: ^1.10.0-nullsafety.3                  # Static analysis rules
 
 # For information on the generic Dart part of this file, see the
 # following page: https://dart.dev/tools/pub/pubspec

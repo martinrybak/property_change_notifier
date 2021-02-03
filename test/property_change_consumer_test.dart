@@ -3,14 +3,6 @@ import 'package:flutter_test/flutter_test.dart';
 import 'package:property_change_notifier/property_change_notifier.dart';
 
 void main() {
-  testWidgets('throws assertion error if child is null', (tester) async {
-    final widget = Builder(builder: (context) {
-      return PropertyChangeConsumer<PropertyChangeNotifier>(builder: null);
-    });
-    await tester.pumpWidget(widget);
-    expect(tester.takeException(), isAssertionError);
-  });
-
   testWidgets('throws assertion error if ancestor PropertyChangeProvider not found', (tester) async {
     final widget = Builder(builder: (context) {
       return PropertyChangeConsumer<PropertyChangeNotifier>(builder: (context, model, properties) {
@@ -79,7 +71,9 @@ void main() {
       final model = PropertyChangeNotifier();
       final property = 'foo';
       final listener = expectAsync3((context, model, properties) {
-        if (properties.isNotEmpty) expect(properties.contains(property), isTrue);
+        if (properties is Set) {
+          if (properties.isNotEmpty) expect(properties.contains(property), isTrue);
+        }
         return Container();
       }, count: 2);
       final widget = PropertyChangeProvider(
@@ -173,7 +167,9 @@ void main() {
       final model = PropertyChangeNotifier();
       final property = 'foo';
       final listener = expectAsync3((context, model, properties) {
-        if (properties.isNotEmpty) expect(properties.contains(property), isTrue);
+        if (properties is Set) {
+          if (properties.isNotEmpty) expect(properties.contains(property), isTrue);
+        }
         return Container();
       }, count: 2);
       final widget = PropertyChangeProvider(

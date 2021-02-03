@@ -32,13 +32,16 @@ class PropertyChangeProvider<T extends PropertyChangeNotifier> extends StatefulW
   /// If [listen] is false, the [properties] parameter must be null or empty.
   static PropertyChangeModel<T> of<T extends PropertyChangeNotifier>(
     BuildContext context, {
-    Iterable<Object> properties,
+    Iterable<Object>? properties,
     bool listen = true,
   }) {
     assert(listen || properties == null, "Don't provide properties if you're not going to listen to them.");
 
-    PropertyChangeModel<T> nullCheck(PropertyChangeModel<T> model) {
-      assert(model != null, 'Could not find an ancestor PropertyChangeProvider<$T>');
+    PropertyChangeModel<T> nullCheck(PropertyChangeModel<T>? model) {
+      if (model == null) {
+        throw AssertionError('Could not find an ancestor PropertyChangeProvider<$T>');
+      }
+
       return model;
     };
 
@@ -50,7 +53,7 @@ class PropertyChangeProvider<T extends PropertyChangeNotifier> extends StatefulW
       return nullCheck(InheritedModel.inheritFrom<PropertyChangeModel<T>>(context));
     }
 
-    PropertyChangeModel<T> widget;
+    PropertyChangeModel<T>? widget;
     for (final property in properties) {
       widget = InheritedModel.inheritFrom<PropertyChangeModel<T>>(context, aspect: property);
     }
@@ -60,12 +63,10 @@ class PropertyChangeProvider<T extends PropertyChangeNotifier> extends StatefulW
 
   /// Creates a [PropertyChangeProvider] that can be accessed by descendant widgets.
   const PropertyChangeProvider({
-    Key key,
-    @required this.value,
-    @required this.child,
-  })  : assert(value != null),
-        assert(child != null),
-        super(key: key);
+    Key? key,
+    required this.value,
+    required this.child,
+  }) : super(key: key);
 
   /// The instance of [T] to provide to descendant widgets.
   final T value;
@@ -106,14 +107,18 @@ class _PropertyChangeProviderState<T extends PropertyChangeNotifier> extends Sta
     );
   }
 
-  void _listener(Object property) {
+  void _listener(Object? property) {
     setState(() {
       _addProperty(property);
     });
   }
 
-  void _addProperty(Object property) {
-    final element = this.context as StatefulElement;
+  void _addProperty(Object? property) {
+    if (property == null) {
+      return;
+    }
+
+    final element = context as StatefulElement;
     if (element.dirty) {
       _properties.add(property);
     } else {
@@ -127,13 +132,13 @@ class _PropertyChangeProviderState<T extends PropertyChangeNotifier> extends Sta
 /// names of the changed properties intersect with the list of properties provided
 /// to the [PropertyChangeProvider].[of] method.
 /// The type parameter [T] is the type of the [PropertyChangeNotifier] subclass.
-class PropertyChangeModel<T extends PropertyChangeNotifier> extends InheritedModel {
+class PropertyChangeModel<T extends PropertyChangeNotifier> extends InheritedModel<String> {
   final _PropertyChangeProviderState<T> _state;
 
   const PropertyChangeModel({
-    Key key,
-    _PropertyChangeProviderState<T> state,
-    Widget child,
+    Key? key,
+    required _PropertyChangeProviderState<T> state,
+    required Widget child,
   })  : _state = state,
         super(key: key, child: child);
 
@@ -149,7 +154,7 @@ class PropertyChangeModel<T extends PropertyChangeNotifier> extends InheritedMod
   }
 
   @override
-  bool updateShouldNotifyDependent(PropertyChangeModel<T> oldWidget, Set<Object> aspects) {
+  bool updateShouldNotifyDependent(PropertyChangeModel<T> oldWidget, Set<dynamic> aspects) {
     return aspects.intersection(_state._properties).isNotEmpty;
   }
 }
