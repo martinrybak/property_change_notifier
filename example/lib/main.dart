@@ -53,7 +53,7 @@ class MyApp extends StatelessWidget {
 class GlobalListener extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
-    return PropertyChangeConsumer<MyModel>(
+    return PropertyChangeConsumer<MyModel, String>(
       builder: (context, model, properties) {
         if (properties.isEmpty) return Container();
         return Text('$properties changed');
@@ -65,7 +65,7 @@ class GlobalListener extends StatelessWidget {
 class FooListener extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
-    return PropertyChangeConsumer<MyModel>(
+    return PropertyChangeConsumer<MyModel, String>(
       properties: ['foo'],
       builder: (context, model, properties) {
         return Text('Foo is ${model.foo}');
@@ -77,7 +77,7 @@ class FooListener extends StatelessWidget {
 class BarListener extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
-    return PropertyChangeConsumer<MyModel>(
+    return PropertyChangeConsumer<MyModel, String>(
       properties: ['bar'],
       builder: (context, model, properties) {
         return Text('Bar is ${model.bar}');
@@ -89,7 +89,7 @@ class BarListener extends StatelessWidget {
 class FooUpdater extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
-    final model = PropertyChangeProvider.of<MyModel>(context, listen: false).value;
+    final model = PropertyChangeProvider.of<MyModel, String>(context, listen: false).value;
     return RaisedButton(
       child: Text('Update foo'),
       onPressed: () => model.foo++
@@ -100,7 +100,7 @@ class FooUpdater extends StatelessWidget {
 class BarUpdater extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
-    final model = PropertyChangeProvider.of<MyModel>(context, listen: false).value;
+    final model = PropertyChangeProvider.of<MyModel, String>(context, listen: false).value;
     return RaisedButton(
       child: Text('Update bar'),
       onPressed: () => model.bar++
@@ -111,7 +111,7 @@ class BarUpdater extends StatelessWidget {
 class BothUpdater extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
-    final model = PropertyChangeProvider.of<MyModel>(context, listen: false).value;
+    final model = PropertyChangeProvider.of<MyModel, String>(context, listen: false).value;
     return RaisedButton(
         child: Text('Update both'),
         onPressed: () {

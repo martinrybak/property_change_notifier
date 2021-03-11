@@ -1,7 +1,7 @@
 import 'package:flutter/foundation.dart';
 
 /// Signature of callbacks that have 1 argument and return no data.
-typedef PropertyCallback<T> = void Function(T);
+typedef PropertyCallback<T> = void Function(T?);
 
 /// A backwards-compatible implementation of [ChangeNotifier] that allows
 /// implementers to provide more granular information to listeners about what
@@ -51,10 +51,9 @@ class PropertyChangeNotifier<T extends Object> extends ChangeNotifier {
   /// Adding the same [listener] for the same property is a no-op.
   /// Adding a [listener] for a non-existent property will not fail, but is functionally pointless.
   @override
-  void addListener(Function listener, [Iterable<T> properties]) {
+  void addListener(Function listener, [Iterable<T>? properties]) {
     assert(_debugAssertNotDisposed());
-    assert(listener != null);
-    assert(listener is VoidCallback || listener is PropertyCallback<T>, 'Listener must be a Function() or Function(T)');
+    assert(listener is VoidCallback || listener is PropertyCallback<T>, 'Listener must be a Function() or Function(T?)');
 
     // Register global listener only
     if (properties == null || properties.isEmpty) {
@@ -67,7 +66,7 @@ class PropertyChangeNotifier<T extends Object> extends ChangeNotifier {
       if (!_propertyListeners.containsKey(property)) {
         _propertyListeners[property] = ObserverList<Function>();
       }
-      _addListener(_propertyListeners[property], listener);
+      _addListener(_propertyListeners[property]!, listener);
     }
   }
 
@@ -77,9 +76,8 @@ class PropertyChangeNotifier<T extends Object> extends ChangeNotifier {
   /// Removing a non-existent listener is no-op.
   /// Removing a listener for a non-existent property will not fail.
   @override
-  void removeListener(Function listener, [Iterable<T> properties]) {
+  void removeListener(Function listener, [Iterable<T>? properties]) {
     assert(_debugAssertNotDisposed());
-    assert(listener != null);
 
     // Remove global listener only
     if (properties == null || properties.isEmpty) {
@@ -95,7 +93,7 @@ class PropertyChangeNotifier<T extends Object> extends ChangeNotifier {
       }
 
       // Remove listener
-      final listeners = _propertyListeners[property];
+      final listeners = _propertyListeners[property]!;
       listeners.remove(listener);
 
       // Remove map entry if needed
@@ -116,8 +114,8 @@ class PropertyChangeNotifier<T extends Object> extends ChangeNotifier {
   @mustCallSuper
   void dispose() {
     assert(_debugAssertNotDisposed());
-    _globalListeners = null;
-    _propertyListeners = null;
+    // _globalListeners = null;
+    // _propertyListeners = null;
     super.dispose();
   }
 
@@ -131,7 +129,7 @@ class PropertyChangeNotifier<T extends Object> extends ChangeNotifier {
   @override
   @protected
   @visibleForTesting
-  void notifyListeners([T property]) {
+  void notifyListeners([T? property]) {
     assert(_debugAssertNotDisposed());
     assert(property is! Iterable, 'notifyListeners() should only be called for one property at a time');
 
@@ -145,7 +143,7 @@ class PropertyChangeNotifier<T extends Object> extends ChangeNotifier {
 
     // If listeners exist for this property, notify them.
     if (_propertyListeners.containsKey(property)) {
-      _notifyListeners(_propertyListeners[property], property);
+      _notifyListeners(_propertyListeners[property]!, property);
     }
   }
 
@@ -159,7 +157,7 @@ class PropertyChangeNotifier<T extends Object> extends ChangeNotifier {
   /// Creates a local copy of [listeners] in case a callback calls
   /// [addListener] or [removeListener] while iterating through the list.
   /// Invokes each listener. If the listener accepts a property parameter, it will be provided.
-  void _notifyListeners(ObserverList<Function> listeners, T property) {
+  void _notifyListeners(ObserverList<Function> listeners, T? property) {
     final localListeners = List<Function>.from(listeners);
     for (final listener in localListeners) {
       // One last check to make sure the listener hasn't been removed

@@ -1,7 +1,7 @@
 import 'package:flutter/widgets.dart';
 import 'package:property_change_notifier/property_change_notifier.dart';
 
-typedef PropertyChangeBuilder<T> = Widget Function(BuildContext, T, Set<Object>);
+typedef PropertyChangeBuilder<T, S> = Widget Function(BuildContext, T?, Set<S>?);
 
 /// A widget-based listener for cases where a [BuildContext] is hard to access, or if you prefer this kind of API.
 /// To register the widget to be rebuilt only on specific property changes, provide a [properties] parameter.
@@ -31,20 +31,19 @@ typedef PropertyChangeBuilder<T> = Widget Function(BuildContext, T, Set<Object>)
 ///    },
 ///  );
 /// ```
-class PropertyChangeConsumer<T extends PropertyChangeNotifier> extends StatelessWidget {
-  final Iterable<Object> properties;
-  final PropertyChangeBuilder<T> builder;
+class PropertyChangeConsumer<T extends PropertyChangeNotifier<S>, S extends Object> extends StatelessWidget {
+  final Iterable<S>? properties;
+  final PropertyChangeBuilder<T, S> builder;
 
   const PropertyChangeConsumer({
-    Key key,
+    Key? key,
     this.properties,
-    @required this.builder,
-  })  : assert(builder != null),
-        super(key: key);
+    required this.builder,
+  })  : super(key: key);
 
   @override
   Widget build(BuildContext context) {
-    final model = PropertyChangeProvider.of<T>(context, properties: this.properties, listen: true);
-    return this.builder(context, model.value, model.properties);
+    final model = PropertyChangeProvider.of<T, S>(context, properties: properties, listen: true);
+    return builder(context, model?.value, model?.properties);
   }
 }
