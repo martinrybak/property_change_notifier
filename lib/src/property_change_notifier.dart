@@ -17,8 +17,8 @@ typedef PropertyCallback<T> = void Function(T?);
 /// be an [Enum] or any type that subclasses [Object]. To work correctly,
 /// [T] must implement `operator==` and `hashCode`.
 class PropertyChangeNotifier<T extends Object> extends ChangeNotifier {
-  var _globalListeners = ObserverList<Function>();
-  var _propertyListeners = <T, ObserverList<Function>>{};
+  ObserverList<Function>? _globalListeners = ObserverList<Function>();
+  Map<T, ObserverList<Function>>? _propertyListeners = <T, ObserverList<Function>>{};
 
   /// Reimplemented from [ChangeNotifier].
   /// Clients should not depend on this value for their behavior, because having
@@ -39,7 +39,7 @@ class PropertyChangeNotifier<T extends Object> extends ChangeNotifier {
   @visibleForTesting
   bool get hasListeners {
     assert(_debugAssertNotDisposed());
-    return _globalListeners.isNotEmpty || _propertyListeners.isNotEmpty;
+    return _globalListeners!.isNotEmpty || _propertyListeners!.isNotEmpty;
   }
 
   /// Registers [listener] for the given [properties]. [listener] must not be null.
@@ -57,16 +57,16 @@ class PropertyChangeNotifier<T extends Object> extends ChangeNotifier {
 
     // Register global listener only
     if (properties == null || properties.isEmpty) {
-      _addListener(_globalListeners, listener);
+      _addListener(_globalListeners!, listener);
       return;
     }
 
     // Register listener for every property
     for (final property in properties) {
-      if (!_propertyListeners.containsKey(property)) {
-        _propertyListeners[property] = ObserverList<Function>();
+      if (!_propertyListeners!.containsKey(property)) {
+        _propertyListeners![property] = ObserverList<Function>();
       }
-      _addListener(_propertyListeners[property]!, listener);
+      _addListener(_propertyListeners![property]!, listener);
     }
   }
 
@@ -81,24 +81,24 @@ class PropertyChangeNotifier<T extends Object> extends ChangeNotifier {
 
     // Remove global listener only
     if (properties == null || properties.isEmpty) {
-      _globalListeners.remove(listener);
+      _globalListeners!.remove(listener);
       return;
     }
 
     // Remove listener for every property
     for (final property in properties) {
       // If no map entry exists for property, ignore
-      if (!_propertyListeners.containsKey(property)) {
+      if (!_propertyListeners!.containsKey(property)) {
         continue;
       }
 
       // Remove listener
-      final listeners = _propertyListeners[property]!;
+      final listeners = _propertyListeners![property]!;
       listeners.remove(listener);
 
       // Remove map entry if needed
       if (listeners.isEmpty) {
-        _propertyListeners.remove(property);
+        _propertyListeners!.remove(property);
       }
     }
   }
@@ -114,8 +114,8 @@ class PropertyChangeNotifier<T extends Object> extends ChangeNotifier {
   @mustCallSuper
   void dispose() {
     assert(_debugAssertNotDisposed());
-    // _globalListeners = null;
-    // _propertyListeners = null;
+    _globalListeners = null;
+    _propertyListeners = null;
     super.dispose();
   }
 
@@ -134,7 +134,7 @@ class PropertyChangeNotifier<T extends Object> extends ChangeNotifier {
     assert(property is! Iterable, 'notifyListeners() should only be called for one property at a time');
 
     // Always notify global listeners
-    _notifyListeners(_globalListeners, property);
+    _notifyListeners(_globalListeners!, property);
 
     // If no property provided, exit
     if (property == null) {
@@ -142,8 +142,8 @@ class PropertyChangeNotifier<T extends Object> extends ChangeNotifier {
     }
 
     // If listeners exist for this property, notify them.
-    if (_propertyListeners.containsKey(property)) {
-      _notifyListeners(_propertyListeners[property]!, property);
+    if (_propertyListeners!.containsKey(property)) {
+      _notifyListeners(_propertyListeners![property]!, property);
     }
   }
 
