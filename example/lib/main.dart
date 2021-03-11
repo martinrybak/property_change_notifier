@@ -29,7 +29,7 @@ class MyApp extends StatelessWidget {
     return MaterialApp(
       title: 'Property Change Notifier',
       home: Scaffold(
-        body: PropertyChangeProvider(
+        body: PropertyChangeProvider<MyModel, String>(
           value: model,
           child: Center(
             child: Column(
