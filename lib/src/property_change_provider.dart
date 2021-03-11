@@ -2,28 +2,33 @@ import 'package:flutter/widgets.dart';
 import 'package:property_change_notifier/property_change_notifier.dart';
 
 /// An [InheritedWidget] that provides access to a [PropertyChangeNotifier] to descendant widgets.
-/// The type parameter [T] is the type of the [PropertyChangeNotifier] subclass.
+/// The type parameter [T] is the type of the [PropertyChangeNotifier<S>] subclass.
 /// The type parameter [S] is the type of the properties to observe.
+///
+/// Given the following model:
+/// ```dart
+/// class MyModel extends PropertyChangeNotifier<String> {...}
+/// ```
 ///
 /// A descendant widget can access the model instance by using the following syntax.
 /// This will automatically register the widget to be rebuilt whenever any property changes on the model:
 /// ```dart
-/// final model = PropertyChangeProvider.of<MyModel>(context).value;
+/// final model = PropertyChangeProvider.of<MyModel, String>(context).value;
 /// ```
 ///
 /// To access the properties that were changed in the current build frame, use the following syntax.
 /// ```dart
-/// final properties = PropertyChangeProvider.of<MyModel>(context).properties;
+/// final properties = PropertyChangeProvider.of<MyModel, String>(context).properties;
 /// ```
 ///
 /// To register the widget to be rebuilt only on specific property changes, provide a [properties] parameter:
 /// ```dart
-/// final model = PropertyChangeProvider.of<MyModel>(context, properties: ['foo', 'bar']).value;
+/// final model = PropertyChangeProvider.of<MyModel, String>(context, properties: ['foo', 'bar']).value;
 /// ```
 ///
-/// To access the model without registering the widget to be rebuilt, provide a [listen] parameter with a value of false:
+/// To only access the model without registering the widget to be rebuilt, provide a [listen] parameter with a value of false:
 /// ```dart
-/// final model = PropertyChangeProvider.of<MyModel>(context, listen: false).value;
+/// final model = PropertyChangeProvider.of<MyModel, String>(context, listen: false).value;
 /// ```
 class PropertyChangeProvider<T extends PropertyChangeNotifier<S>, S extends Object> extends StatefulWidget {
   /// Retrieves the [PropertyChangeModel] from the nearest ancestor [PropertyChangeProvider].
@@ -126,7 +131,7 @@ class _PropertyChangeProviderState<T extends PropertyChangeNotifier<S>, S extend
 /// whenever its [PropertyChangeNotifier] is updated. Notifies dependents when the
 /// names of the changed properties intersect with the list of properties provided
 /// to the [PropertyChangeProvider].[of] method.
-/// The type parameter [T] is the type of the [PropertyChangeNotifier] subclass.
+/// The type parameter [T] is the type of the [PropertyChangeNotifier<S>] subclass.
 /// The type parameter [S] is the type of the properties to observe.
 class PropertyChangeModel<T extends PropertyChangeNotifier<S>, S extends Object> extends InheritedModel<S> {
   final _PropertyChangeProviderState<T, S> _state;

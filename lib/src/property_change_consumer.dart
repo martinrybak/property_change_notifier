@@ -5,10 +5,12 @@ typedef PropertyChangeBuilder<T, S> = Widget Function(BuildContext, T?, Set<S>?)
 
 /// A widget-based listener for cases where a [BuildContext] is hard to access, or if you prefer this kind of API.
 /// To register the widget to be rebuilt only on specific property changes, provide a [properties] parameter.
+/// The type parameter [T] is the type of the [PropertyChangeNotifier] subclass.
+/// The type parameter [S] is the type of the properties to observe.
 ///
 /// Access both the model value and the changed properties via the [builder] callback:
 /// ```dart
-/// PropertyChangeConsumer<MyModel>(
+/// PropertyChangeConsumer<MyModel, String>(
 ///    properties: ['foo', 'bar'],
 ///    builder: (context, model, properties) {
 ///      return Column(
@@ -30,6 +32,12 @@ typedef PropertyChangeBuilder<T, S> = Widget Function(BuildContext, T?, Set<S>?)
 ///      );
 ///    },
 ///  );
+///
+/// See also:
+///
+///  * [StringPropertyChangeConsumer], where the second generic type can be omitted
+///    for models that extend PropertyChangeNotifier<String>.
+///
 /// ```
 class PropertyChangeConsumer<T extends PropertyChangeNotifier<S>, S extends Object> extends StatelessWidget {
   final Iterable<S>? properties;

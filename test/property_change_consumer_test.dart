@@ -2,8 +2,6 @@ import 'package:flutter/widgets.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:property_change_notifier/property_change_notifier.dart';
 
-class MyModel extends PropertyChangeNotifier<String> { }
-
 void main() {
   testWidgets('throws assertion error if ancestor PropertyChangeProvider not found', (tester) async {
     final widget = Builder(builder: (context) {
@@ -199,6 +197,8 @@ void main() {
     });
   });
 }
+
+class MyModel extends PropertyChangeNotifier<String> { }
 
 /// Convenience class for invoking multiple [expectAsync3] sequentially.
 class MultiExpectAsync3<T, A, B, C> {
