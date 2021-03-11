@@ -89,7 +89,7 @@ void _listenerTwo(String property) {
 ```
 
 ### Adding listeners
-Listeners can be added at any time. A listener cannot be `null`. Adding a listener with no parameters will cause it to listen to all properties. The same listener can be added to multiple properties. Adding the same listener again is a no-op. It doesn't hurt to add a listener to a non-existent property, but it serves no purpose; `PropertyChangeNotifier` has no way of knowing if the property actually exists. 
+Listeners can be added at any time. Adding a listener with no parameters will cause it to listen to all properties. The same listener can be added to multiple properties. Adding the same listener again is a no-op. It doesn't hurt to add a listener to a non-existent property, but it serves no purpose; `PropertyChangeNotifier` has no way of knowing if the property actually exists. 
 
 ```
 final model = MyModel();
@@ -121,7 +121,7 @@ Referring to properties using [string literals](https://api.dartlang.org/stable/
 
 ```
 // Properties
-abstract class MyModelProperties {
+abstract class MyProperties {
   static String get foo => 'foo';
   static String get bar => 'bar';
 }
@@ -130,14 +130,14 @@ abstract class MyModelProperties {
 class MyModel with PropertyChangeNotifier<String> {
   set foo(int value) {
     _foo = value;
-    notifyListeners(MyModelProperties.foo);
+    notifyListeners(MyProperties.foo);
   }
   …
 }
 
 // Listener
 final model = MyModel();
-model.addListener(_listener, [MyModelProperties.foo]);
+model.addListener(_listener, [MyProperties.foo]);
 ```
 
 ### Enum values as property names
@@ -146,23 +146,23 @@ It might be more convenient to use enum values for property names. Remember to p
 
 ```
 // Properties
-enum MyModelProperties {
+enum MyProperties {
   foo,
   bar,
 }
 
 // Model
-class MyModel with PropertyChangeNotifier<MyModelProperties> {
+class MyModel with PropertyChangeNotifier<MyProperties> {
   set foo(int value) {
     _foo = value;
-    notifyListeners(MyModelProperties.foo);
+    notifyListeners(MyProperties.foo);
   }
   …
 }
 
 // Listener
 final model = MyModel();
-model.addListener(_listener, [MyModelProperties.foo]);
+model.addListener(_listener, [MyProperties.foo]);
 ```
 
 You can even use your own custom types as property names. They just must extend [Object](https://api.dartlang.org/stable/2.4.0/dart-core/Object-class.html) and correctly implement equality using ``==`` and ``hashCode``. 
@@ -195,16 +195,16 @@ Or you can use `PropertyChangeNotifier` as a superclass instead (using the `exte
 
 ## Usage with Widgets
 
-`PropertyChangeProvider` can be used to expose a `PropertyChangeNotifier` instance to descendant widgets, and optionally rebuild them when all or certain properties change. First, create a root `PropertyChangeProvider` widget with an instance of your model:
+`PropertyChangeProvider` can be used to expose a `PropertyChangeNotifier` instance to descendant widgets, and optionally rebuild them when all or certain properties change. First, create a root `PropertyChangeProvider` widget with an instance of your model. Be sure to provide the two generic type parameters: the first being your model type and the second, your property type:
 
 ```
-PropertyChangeProvider(
+PropertyChangeProvider<MyModel, String>(
   value: MyModel(),
   child: MyApp(...)
 };
 ```
 
-Then, from any descendant widget, listen for changes to all or some properties by using the standard `of()` syntax typically used with `InheritedWidget`. You can then access either the model itself or its last changed property. Here are a few different examples:
+Then, from any descendant widget, listen for changes to all or some properties by using the standard `of()` syntax typically used with `InheritedWidget`. You can then access either the model itself or its last changed property. Again, remember to provide the same two generic type parameters. Here are a few different examples:
 
 ### Rebuilding when any property changes
 Just call the static `of()` method anywhere from your widget, passing in its `BuildContext`.
@@ -212,7 +212,7 @@ Just call the static `of()` method anywhere from your widget, passing in its `Bu
 ```
 @override
 Widget build(BuildContext context) {
-  PropertyChangeProvider.of<MyModel>(context);
+  PropertyChangeProvider.of<MyModel, String>(context);
   return Text('MyModel changed!);
 }
 ```
@@ -223,7 +223,7 @@ Provide a `properties` parameter list with a single value.
 ```
 @override
 Widget build(BuildContext context) {
-  PropertyChangeProvider.of<MyModel>(context, properties: ['foo']);    
+  PropertyChangeProvider.of<MyModel, String>(context, properties: ['foo']);    
   return Text('Foo changed!);
 }
 ```
@@ -234,7 +234,7 @@ Provide a `properties` parameter list with multiple values.
 ```
 @override
 Widget build(BuildContext context) {
-  PropertyChangeProvider.of<MyModel>(context, properties: ['foo', 'bar']);    
+  PropertyChangeProvider.of<MyModel, String>(context, properties: ['foo', 'bar']);    
   return Text('Foo or Bar changed!);
 }
 ```
@@ -245,7 +245,7 @@ Call `value` on the return value of the `of()` method.
 ```
 @override
 Widget build(BuildContext context) {
-  final model = PropertyChangeProvider.of<MyModel>(context).value;
+  final model = PropertyChangeProvider.of<MyModel, String>(context).value;
   ...
 }
 ```
@@ -256,7 +256,7 @@ You may want to just access the model without registering for a rebuild. For exa
 ```
 @override
 Widget build(BuildContext context) {
-  final model = PropertyChangeProvider.of<MyModel>(context, listen: false).value;
+  final model = PropertyChangeProvider.of<MyModel, String>(context, listen: false).value;
   ...
 }
 ```
@@ -268,18 +268,18 @@ Useful if you are listening to all or multiple properties and wish to know which
 ```
 @override
 Widget build(BuildContext context) {
-  final properties = PropertyChangeProvider.of<MyModel>(context).properties;
+  final properties = PropertyChangeProvider.of<MyModel, String>(context).properties;
   ...
 }
 ```
 
 ### Accessing as a widget
-`PropertyChangeConsumer` is a widget-based listener for cases where a `BuildContext` is hard to access, or if you prefer this kind of API. You can access both the model value and the changed properties via the `builder` callback:
+`PropertyChangeConsumer` is a widget-based listener for cases where a `BuildContext` is hard to access, or if you prefer this kind of API. You can access both the model value and the changed properties via the `builder` callback. Again, remember to provide both generic type parameters:
 
 ```
 @override
 Widget build(BuildContext context) {
-  return PropertyChangeConsumer<MyModel>(
+  return PropertyChangeConsumer<MyModel, String>(
     properties: ['foo', 'bar'],
     builder: (context, model, properties) {
       ...
