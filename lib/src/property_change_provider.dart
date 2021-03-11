@@ -53,47 +53,10 @@ class PropertyChangeProvider<T extends PropertyChangeNotifier<S>, S extends Obje
 
     PropertyChangeModel<T, S>? widget;
     for (final property in properties) {
-
-      // Create a dependency on all of the type T ancestor models up until
-      // a model is found for which isSupportedAspect(aspect) is true.
-      final models = <InheritedElement>[];
-      _findModels<PropertyChangeModel<T, S>,S>(context, property, models);
-      if (models.isEmpty) {
-        return null;
-      }
-
-      final lastModel = models.last;
-      for (final model in models) {
-        final value = context.dependOnInheritedElement(model, aspect: property) as PropertyChangeModel<T, S>;
-        if (model == lastModel) return value;
-      }
-
-      assert(false);
-      return null;
+      widget = InheritedModel.inheritFrom<PropertyChangeModel<T, S>>(context, aspect: property);
     }
 
     return nullCheck(widget);
-  }
-
-  static void _findModels<T extends InheritedModel<S>, S>(BuildContext context, S aspect, List<InheritedElement> results) {
-    final model = context.getElementForInheritedWidgetOfExactType<T>();
-    if (model == null) return;
-
-    results.add(model);
-
-    assert(model.widget is T);
-    final modelWidget = model.widget as T;
-    // ignore: invalid_use_of_protected_member
-    if (modelWidget.isSupportedAspect(aspect as Object)) return;
-
-    Element? modelParent;
-    model.visitAncestorElements((Element ancestor) {
-      modelParent = ancestor;
-      return false;
-    });
-    if (modelParent == null) return;
-
-    _findModels<T,S>(modelParent!, aspect, results);
   }
 
   /// Creates a [PropertyChangeProvider] that can be accessed by descendant widgets.
