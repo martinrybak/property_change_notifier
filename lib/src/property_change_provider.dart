@@ -44,7 +44,7 @@ class PropertyChangeProvider<T extends PropertyChangeNotifier<S>, S extends Obje
     assert(listen || properties == null, "Don't provide properties if you're not going to listen to them.");
 
     PropertyChangeModel<T, S>? nullCheck(PropertyChangeModel<T, S>? model) {
-      assert(model != null, 'Could not find an ancestor PropertyChangeProvider<$T>');
+      assert(model != null, 'Could not find an ancestor PropertyChangeProvider<$T, $S>');
       return model;
     };
 
