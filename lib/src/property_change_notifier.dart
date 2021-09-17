@@ -184,3 +184,6 @@ class PropertyChangeNotifier<T extends Object> extends ChangeNotifier {
     return true;
   }
 }
+
+/// A convenience typedef to use in the common use case where property names are of type [String].
+typedef StringPropertyChangeNotifier = PropertyChangeNotifier<String>;

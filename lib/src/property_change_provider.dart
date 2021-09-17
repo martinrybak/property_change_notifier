@@ -83,6 +83,9 @@ class PropertyChangeProvider<T extends PropertyChangeNotifier<S>, S extends Obje
   _PropertyChangeProviderState createState() => _PropertyChangeProviderState<T, S>();
 }
 
+/// A convenience typedef to use in the common use case where property names are of type [String].
+typedef StringPropertyChangeProvider<T extends PropertyChangeNotifier<String>> = PropertyChangeProvider<T, String>;
+
 /// The companion [State] object to [PropertyChangeProvider]. For private use only.
 /// Subscribes as a global listener to the [PropertyChangeNotifier] instance at [widget].[value].
 /// Rebuilds whenever a property is changed and creates a new [PropertyChangeModel] with a reference

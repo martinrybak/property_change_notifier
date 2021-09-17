@@ -55,3 +55,6 @@ class PropertyChangeConsumer<T extends PropertyChangeNotifier<S>, S extends Obje
     return builder(context, model?.value, model?.properties);
   }
 }
+
+/// A convenience typedef to use in the common use case where property names are of type [String].
+typedef StringPropertyChangeConsumer<T extends PropertyChangeNotifier<String>> = PropertyChangeConsumer<T, String>;
