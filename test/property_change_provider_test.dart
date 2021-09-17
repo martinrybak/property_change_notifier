@@ -261,7 +261,7 @@ void main() {
 
     testWidgets('can access changed properties when notifyListeners() called with a property', (tester) async {
       final model = MyModel();
-      final property = 'foo';
+      const property = 'foo';
       final widget = PropertyChangeProvider<MyModel, String>(
         value: model,
         child: Builder(
@@ -334,7 +334,7 @@ void main() {
 
     testWidgets('rebuilds when notifyListeners() is called with a matching property', (tester) async {
       final model = MyModel();
-      final property = 'foo';
+      const property = 'foo';
       final listener = expectAsync0(() {}, count: 2);
       final widget = PropertyChangeProvider<MyModel, String>(
         value: model,
@@ -408,7 +408,7 @@ void main() {
 
     testWidgets('can access changed property when notifyListeners() called with a matching property', (tester) async {
       final model = MyModel();
-      final property = 'foo';
+      const property = 'foo';
       final widget = PropertyChangeProvider<MyModel, String>(
         value: model,
         child: Builder(
@@ -434,7 +434,7 @@ class OtherModel extends PropertyChangeNotifier<String> {}
 class BuildDetector extends StatelessWidget {
   final Function() onBuild;
 
-  BuildDetector(this.onBuild);
+  const BuildDetector(this.onBuild, [Key? key]) : super(key: key);
 
   @override
   Widget build(BuildContext context) {

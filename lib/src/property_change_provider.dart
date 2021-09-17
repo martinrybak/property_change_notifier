@@ -46,7 +46,7 @@ class PropertyChangeProvider<T extends PropertyChangeNotifier<S>, S extends Obje
     PropertyChangeModel<T, S>? nullCheck(PropertyChangeModel<T, S>? model) {
       assert(model != null, 'Could not find an ancestor PropertyChangeProvider<$T, $S>');
       return model;
-    };
+    }
 
     if (!listen) {
       return nullCheck(context.findAncestorWidgetOfExactType<PropertyChangeModel<T, S>>());
@@ -158,7 +158,7 @@ class PropertyChangeModel<T extends PropertyChangeNotifier<S>, S extends Object>
   }
 
   @override
-  bool updateShouldNotifyDependent(PropertyChangeModel<T, S> oldWidget, Set<S> aspects) {
-    return aspects.intersection(_state._properties).isNotEmpty;
+  bool updateShouldNotifyDependent(PropertyChangeModel<T, S> oldWidget, Set<S> dependencies) {
+    return dependencies.intersection(_state._properties).isNotEmpty;
   }
 }

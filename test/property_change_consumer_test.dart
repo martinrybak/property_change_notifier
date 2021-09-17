@@ -70,7 +70,7 @@ void main() {
 
     testWidgets('provides changed property to builder', (tester) async {
       final model = MyModel();
-      final property = 'foo';
+      const property = 'foo';
       final multi = MultiExpectAsync3([
         expectAsync3((context, model, Set<String>? properties) {
           expect(properties, isEmpty);
@@ -106,7 +106,7 @@ void main() {
         value: model,
         child: Builder(
           builder: (context) {
-            return PropertyChangeConsumer<MyModel, String>(properties: ['foo'], builder: listener);
+            return PropertyChangeConsumer<MyModel, String>(properties: const ['foo'], builder: listener);
           },
         ),
       );
@@ -124,7 +124,7 @@ void main() {
         value: model,
         child: Builder(
           builder: (context) {
-            return PropertyChangeConsumer<MyModel, String>(properties: ['foo'], builder: listener);
+            return PropertyChangeConsumer<MyModel, String>(properties: const ['foo'], builder: listener);
           },
         ),
       );
@@ -135,7 +135,7 @@ void main() {
 
     testWidgets('is rebuilt when notifyListeners() is called with a matching property', (tester) async {
       final model = MyModel();
-      final property = 'foo';
+      const property = 'foo';
       final listener = expectAsync3((context, model, properties) {
         return Container();
       }, count: 2);
@@ -143,7 +143,7 @@ void main() {
         value: model,
         child: Builder(
           builder: (context) {
-            return PropertyChangeConsumer<MyModel, String>(properties: [property], builder: listener);
+            return PropertyChangeConsumer<MyModel, String>(properties: const [property], builder: listener);
           },
         ),
       );
@@ -162,7 +162,7 @@ void main() {
         value: model,
         child: Builder(
           builder: (context) {
-            return PropertyChangeConsumer<MyModel, String>(properties: ['foo'], builder: listener);
+            return PropertyChangeConsumer<MyModel, String>(properties: const ['foo'], builder: listener);
           },
         ),
       );
@@ -171,7 +171,7 @@ void main() {
 
     testWidgets('provides changed property to builder', (tester) async {
       final model = MyModel();
-      final property = 'foo';
+      const property = 'foo';
       final multi = MultiExpectAsync3([
         expectAsync3((context, model, Set<String>? properties) {
           expect(properties, isEmpty);
@@ -187,7 +187,7 @@ void main() {
         value: model,
         child: Builder(
           builder: (context) {
-            return PropertyChangeConsumer<MyModel, String>(properties: [property], builder: multi.listener);
+            return PropertyChangeConsumer<MyModel, String>(properties: const [property], builder: multi.listener);
           },
         ),
       );

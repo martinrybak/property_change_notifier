@@ -1,6 +1,8 @@
 import 'package:flutter_test/flutter_test.dart';
 import 'package:property_change_notifier/src/property_change_notifier.dart';
 
+// ignore_for_file: prefer_function_declarations_over_variables
+
 void main() {
   group('hasListeners', () {
     test('invoking after dispose() throws assertion', () {
@@ -35,7 +37,7 @@ void main() {
     });
 
     test('returns false after adding and removing same listener with properties', () {
-      final property = 'foo';
+      const property = 'foo';
       final model = PropertyChangeNotifier();
       final listener = () {};
       model.addListener(listener, [property]);
@@ -72,7 +74,7 @@ void main() {
     });
 
     test('same listener with properties twice returns normally', () {
-      final property = 'foo';
+      const property = 'foo';
       final listener = () {};
       final model = PropertyChangeNotifier();
       model.addListener(listener, [property]);
@@ -106,7 +108,7 @@ void main() {
     });
 
     test('same listener with properties twice returns normally', () {
-      final property = 'foo';
+      const property = 'foo';
       final listener = () {};
       final model = PropertyChangeNotifier();
       model.addListener(listener, [property]);
@@ -160,7 +162,7 @@ void main() {
     });
 
     test('same listener with same properties is only invoked once', () {
-      final property = 'foo';
+      const property = 'foo';
       final model = PropertyChangeNotifier();
       final listener = expectAsync0(() {}, count: 1);
       model.addListener(listener, [property]);
@@ -169,8 +171,8 @@ void main() {
     });
 
     test('same listener with different properties is invoked for each property', () {
-      final property1 = 'foo';
-      final property2 = 'bar';
+      const property1 = 'foo';
+      const property2 = 'bar';
       final model = PropertyChangeNotifier();
       final listener = expectAsync0(() {}, count: 2);
       model.addListener(listener, [property1]);
@@ -180,8 +182,8 @@ void main() {
     });
 
     test('adding and removing same listener with different properties is invoked for remaining property only', () {
-      final property1 = 'foo';
-      final property2 = 'bar';
+      const property1 = 'foo';
+      const property2 = 'bar';
       final model = PropertyChangeNotifier();
       final listener = expectAsync0(() {}, count: 1);
       model.addListener(listener, [property1]);
@@ -200,7 +202,7 @@ void main() {
     });
 
     test('removed listener with properties is no longer invoked', () {
-      final property = 'foo';
+      const property = 'foo';
       final model = PropertyChangeNotifier();
       final listener = expectAsync0(() {}, count: 0);
       model.addListener(listener, [property]);
@@ -236,7 +238,7 @@ void main() {
         });
 
         test('is invoked with a property when notifyListeners() is invoked with a property', () {
-          final property = 'foo';
+          const property = 'foo';
           final model = PropertyChangeNotifier();
           final listener = expectAsync1((_property) {
             expect(_property, property);
@@ -257,7 +259,7 @@ void main() {
         });
 
         test('is invoked when notifyListeners() is invoked with same property', () {
-          final property = 'foo';
+          const property = 'foo';
           final model = PropertyChangeNotifier();
           final listener = expectAsync0(() {}, count: 1);
           model.addListener(listener, [property]);
@@ -282,7 +284,7 @@ void main() {
 
         test('is invoked with property name when notifyListeners() is invoked with same property', () {
           final model = PropertyChangeNotifier();
-          final property = 'foo';
+          const property = 'foo';
           final listener = expectAsync1((_property) {
             expect(_property, _property);
           }, count: 1);
@@ -309,7 +311,7 @@ void main() {
         });
 
         test('is invoked when notifyListeners() is invoked with matching property', () {
-          final property = 'foo';
+          const property = 'foo';
           final model = PropertyChangeNotifier();
           final listener = expectAsync0(() {}, count: 1);
           model.addListener(listener, [property, 'bar']);
@@ -334,7 +336,7 @@ void main() {
 
         test('is invoked with property name when notifyListeners() is invoked with same property', () {
           final model = PropertyChangeNotifier();
-          final property = 'foo';
+          const property = 'foo';
           final listener = expectAsync1((_property) {
             expect(_property, _property);
           }, count: 1);
@@ -345,7 +347,7 @@ void main() {
         test('is invoked with property name when notifyListeners() is invoked with same property and other property',
             () {
           final model = PropertyChangeNotifier();
-          final property = 'foo';
+          const property = 'foo';
           final listener = expectAsync1((_property) {
             expect(_property, _property);
           }, count: 1);
