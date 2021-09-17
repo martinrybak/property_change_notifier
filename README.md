@@ -286,8 +286,15 @@ Widget build(BuildContext context) {
     },
   );
 }
-
 ```
+
+### Type Alases
+
+Thanks to the new type alias feature avaiable as of Dart 2.13, this package comes with several less verbose alternatives to use in the common use case where property names are of type `String`.
+
+*  `StringPropertyChangeNotifier`
+*  `StringPropertyChangeProvider<MyModel>`
+*  `StringPropertyChangeConsumer<MyModel>`
 
 ## Unit Tests
 
