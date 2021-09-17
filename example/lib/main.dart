@@ -90,7 +90,7 @@ class FooUpdater extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final model = PropertyChangeProvider.of<MyModel, String>(context, listen: false).value;
-    return RaisedButton(
+    return ElevatedButton(
       child: Text('Update foo'),
       onPressed: () => model.foo++
     );
@@ -101,7 +101,7 @@ class BarUpdater extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final model = PropertyChangeProvider.of<MyModel, String>(context, listen: false).value;
-    return RaisedButton(
+    return ElevatedButton(
       child: Text('Update bar'),
       onPressed: () => model.bar++
     );
@@ -112,7 +112,7 @@ class BothUpdater extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final model = PropertyChangeProvider.of<MyModel, String>(context, listen: false).value;
-    return RaisedButton(
+    return ElevatedButton(
         child: Text('Update both'),
         onPressed: () {
           model.foo++;
