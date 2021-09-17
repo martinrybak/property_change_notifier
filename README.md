@@ -291,4 +291,4 @@ Widget build(BuildContext context) {
 
 ## Unit Tests
 
-This library has 100% [test coverage](http://htmlpreview.github.io/?https://github.com/vgventures/property_change_notifier/blob/master/coverage/html/index.html).
+This library has 100% [test coverage](http://htmlpreview.github.io/?https://github.com/martinrybak/property_change_notifier/blob/master/coverage/html/index.html).
