@@ -1,6 +1,12 @@
+## 0.3.0
+
+* Added null safety
+* Added convenience classes to use when property names are of type `String`
+* Switched to use flutter_lints
+
 ## 0.2.0
 
-* Updated `PropertyChangeProvider` to detect all properties changed in the current build frame.
+* Updated `PropertyChangeProvider` to detect all properties changed in the current build frame
 
 ## 0.1.5
 
