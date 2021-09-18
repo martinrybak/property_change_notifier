@@ -298,4 +298,4 @@ Thanks to the new type alias feature avaiable as of Dart 2.13, this package come
 
 ## Unit Tests
 
-This library has 100% [test coverage](http://htmlpreview.github.io/?https://github.com/martinrybak/property_change_notifier/blob/master/coverage/html/index.html).
+This library has 100% [test coverage](https://htmlpreview.github.io/?https://github.com/martinrybak/property_change_notifier/blob/master/coverage/html/index.html).

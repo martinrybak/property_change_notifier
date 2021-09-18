@@ -47,7 +47,7 @@ class PropertyChangeConsumer<T extends PropertyChangeNotifier<S>, S extends Obje
     Key? key,
     this.properties,
     required this.builder,
-  })  : super(key: key);
+  }) : super(key: key);
 
   @override
   Widget build(BuildContext context) {

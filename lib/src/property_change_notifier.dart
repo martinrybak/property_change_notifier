@@ -53,7 +53,10 @@ class PropertyChangeNotifier<T extends Object> extends ChangeNotifier {
   @override
   void addListener(Function listener, [Iterable<T>? properties]) {
     assert(_debugAssertNotDisposed());
-    assert(listener is VoidCallback || listener is PropertyCallback<T>, 'Listener must be a Function() or Function(T?)');
+    assert(
+      listener is VoidCallback || listener is PropertyCallback<T>,
+      'Listener must be a Function() or Function(T?)',
+    );
 
     // Register global listener only
     if (properties == null || properties.isEmpty) {
