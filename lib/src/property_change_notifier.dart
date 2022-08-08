@@ -136,18 +136,15 @@ class PropertyChangeNotifier<T extends Object> extends ChangeNotifier {
     assert(_debugAssertNotDisposed());
     assert(property is! Iterable, 'notifyListeners() should only be called for one property at a time');
 
-    // Always notify global listeners
-    _notifyListeners(_globalListeners!, property);
+    // All global listeners should be notified.
+    final List<Function> listenersToNotify = List<Function>.from(_globalListeners!);
 
-    // If no property provided, exit
-    if (property == null) {
-      return;
-    }
-
-    // If listeners exist for this property, notify them.
+    // All matching property listeners should be notified as well.
     if (_propertyListeners!.containsKey(property)) {
-      _notifyListeners(_propertyListeners![property]!, property);
+      listenersToNotify.addAll(_propertyListeners![property]!);
     }
+
+    _notifyListeners(listenersToNotify, property);
   }
 
   /// Adds [listener] to [listeners] only if is not already present.
@@ -160,7 +157,7 @@ class PropertyChangeNotifier<T extends Object> extends ChangeNotifier {
   /// Creates a local copy of [listeners] in case a callback calls
   /// [addListener] or [removeListener] while iterating through the list.
   /// Invokes each listener. If the listener accepts a property parameter, it will be provided.
-  void _notifyListeners(ObserverList<Function> listeners, T? property) {
+  void _notifyListeners(List<Function> listeners, T? property) {
     final localListeners = List<Function>.from(listeners);
     for (final listener in localListeners) {
       // One last check to make sure the listener hasn't been removed
