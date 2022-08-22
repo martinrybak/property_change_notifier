@@ -361,6 +361,17 @@ void main() {
           model.addListener(listener, ['foo', 'bar']);
           model.notifyListeners('baz');
         });
+
+        test('is invoked when notifyListeners() is invoked with a global listener that disposes it', () {
+          final model = PropertyChangeNotifier();
+          model.addListener(() => model.dispose());
+          const property = 'foo';
+          final listener = expectAsync1((_property) {
+            expect(_property, _property);
+          }, count: 1);
+          model.addListener(listener, [property]);
+          model.notifyListeners(property);
+        });
       });
     });
   });
