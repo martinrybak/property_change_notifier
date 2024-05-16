@@ -22,6 +22,8 @@ class MyModel with PropertyChangeNotifier<String> {
 void main() => runApp(MyApp());
 
 class MyApp extends StatelessWidget {
+  MyApp({super.key});
+
   final model = MyModel();
 
   @override
@@ -31,7 +33,7 @@ class MyApp extends StatelessWidget {
       home: Scaffold(
         body: PropertyChangeProvider<MyModel, String>(
           value: model,
-          child: Center(
+          child: const Center(
             child: Column(
               mainAxisSize: MainAxisSize.min,
               children: [
@@ -51,11 +53,13 @@ class MyApp extends StatelessWidget {
 }
 
 class GlobalListener extends StatelessWidget {
+  const GlobalListener({super.key});
+
   @override
   Widget build(BuildContext context) {
     return PropertyChangeConsumer<MyModel, String>(
       builder: (context, model, properties) {
-        if (properties.isEmpty) return Container();
+        if (properties == null || properties.isEmpty) return Container();
         return Text('$properties changed');
       },
     );
@@ -63,60 +67,70 @@ class GlobalListener extends StatelessWidget {
 }
 
 class FooListener extends StatelessWidget {
+  const FooListener({super.key});
+
   @override
   Widget build(BuildContext context) {
     return PropertyChangeConsumer<MyModel, String>(
-      properties: ['foo'],
+      properties: const ['foo'],
       builder: (context, model, properties) {
-        return Text('Foo is ${model.foo}');
+        return Text('Foo is ${model?.foo}');
       },
     );
   }
 }
 
 class BarListener extends StatelessWidget {
+  const BarListener({super.key});
+
   @override
   Widget build(BuildContext context) {
     return PropertyChangeConsumer<MyModel, String>(
-      properties: ['bar'],
+      properties: const ['bar'],
       builder: (context, model, properties) {
-        return Text('Bar is ${model.bar}');
+        return Text('Bar is ${model?.bar}');
       },
     );
   }
 }
 
 class FooUpdater extends StatelessWidget {
+  const FooUpdater({super.key});
+
   @override
   Widget build(BuildContext context) {
-    final model = PropertyChangeProvider.of<MyModel, String>(context, listen: false).value;
-    return ElevatedButton(
-      child: Text('Update foo'),
-      onPressed: () => model.foo++
+    final model = PropertyChangeProvider.of<MyModel, String>(context, listen: false)?.value;
+    return TextButton(
+        child: const Text('Update foo'),
+        onPressed: () => model?.foo++
     );
   }
 }
 
 class BarUpdater extends StatelessWidget {
+  const BarUpdater({super.key});
+
   @override
   Widget build(BuildContext context) {
-    final model = PropertyChangeProvider.of<MyModel, String>(context, listen: false).value;
-    return ElevatedButton(
-      child: Text('Update bar'),
-      onPressed: () => model.bar++
+    final model = PropertyChangeProvider.of<MyModel, String>(context, listen: false)?.value;
+    return TextButton(
+        child: const Text('Update bar'),
+        onPressed: () => model?.bar++
     );
   }
 }
 
 class BothUpdater extends StatelessWidget {
+  const BothUpdater({super.key});
+
   @override
   Widget build(BuildContext context) {
-    final model = PropertyChangeProvider.of<MyModel, String>(context, listen: false).value;
-    return ElevatedButton(
-        child: Text('Update both'),
+    final model = PropertyChangeProvider.of<MyModel, String>(context, listen: false)?.value;
+    return TextButton(
+        child: const Text('Update both'),
         onPressed: () {
-          model.foo++;
-          model.bar++;
+          model?.foo++;
+          model?.bar++;
         }
     );
   }
