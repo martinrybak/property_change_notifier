@@ -1,3 +1,10 @@
+## 0.4.0
+
+* Updated minimum Dart SDK to 3.0.0
+* `PropertyChangeNotifier` can now be used as a mixin without causing compiler errors
+* Updated linter version and implemented suggested fixes
+* Regenerated example project to use latest Flutter template
+
 ## 0.3.0
 
 * Added null safety
