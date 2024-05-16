@@ -16,7 +16,7 @@ typedef PropertyCallback<T> = void Function(T?);
 /// [T] is the type of the property name and is usually [String] but can
 /// be an [Enum] or any type that subclasses [Object]. To work correctly,
 /// [T] must implement `operator==` and `hashCode`.
-class PropertyChangeNotifier<T extends Object> extends ChangeNotifier {
+mixin class PropertyChangeNotifier<T extends Object> implements ChangeNotifier {
   ObserverList<Function>? _globalListeners = ObserverList<Function>();
   Map<T, ObserverList<Function>>? _propertyListeners = <T, ObserverList<Function>>{};
 
@@ -119,7 +119,6 @@ class PropertyChangeNotifier<T extends Object> extends ChangeNotifier {
     assert(_debugAssertNotDisposed());
     _globalListeners = null;
     _propertyListeners = null;
-    super.dispose();
   }
 
   /// Notifies the appropriate listeners that [property] was changed.
