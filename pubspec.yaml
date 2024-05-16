@@ -4,7 +4,7 @@ version: 0.3.0
 homepage: https://github.com/martinrybak/property_change_notifier
 
 environment:
-  sdk: ">=2.13.0 <3.0.0"
+  sdk: ">=3.0.0 <4.0.0"
 
 dependencies:
   flutter:
@@ -13,7 +13,7 @@ dependencies:
 dev_dependencies:
   flutter_test:
     sdk: flutter
-  flutter_lints: ^1.0.4                  # Static analysis rules
+  flutter_lints: ^4.0.0                  # Static analysis rules
 
 # For information on the generic Dart part of this file, see the
 # following page: https://dart.dev/tools/pub/pubspec
