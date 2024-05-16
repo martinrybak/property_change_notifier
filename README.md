@@ -165,33 +165,7 @@ final model = MyModel();
 model.addListener(_listener, [MyProperties.foo]);
 ```
 
-You can even use your own custom types as property names. They just must extend [Object](https://api.dartlang.org/stable/2.4.0/dart-core/Object-class.html) and correctly implement equality using ``==`` and ``hashCode``. 
-
-### Mixin compilation error
-
-If you are using `PropertyChangeNotifier` as a mixin and see the following compilation error:
-
-```
-error: The class 'PropertyChangeNotifier' can't be used as a mixin because it extends a class other than Object.
-```
-The solution is to ignore the `mixin_inherits_from_not_object` static analyzer rule. You can do this by adding the following line above your model class declaration:
-
-```
-// ignore: mixin_inherits_from_not_object
-class MyModel with PropertyChangeNotifier<String> {
-...
-}
-```
-
-Or you can add the following to your `analysis_options.yaml` file:
-
-```
-analyzer:
-  errors:
-    mixin_inherits_from_not_object: ignore
-```    
-
-Or you can use `PropertyChangeNotifier` as a superclass instead (using the `extends` keyword).
+You can even use your own custom types as property names. They just must extend [Object](https://api.dartlang.org/stable/2.4.0/dart-core/Object-class.html) and correctly implement equality using ``==`` and ``hashCode``.
 
 ## Usage with Widgets
 
