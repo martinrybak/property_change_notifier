@@ -14,7 +14,7 @@ typedef PropertyCallback<T> = void Function(T?);
 /// notifications (where N is the number of listeners).
 ///
 /// [T] is the type of the property name and is usually [String] but can
-/// be an [Enum] or any type that subclasses [Object]. To work correctly,
+/// be an enum or any type that subclasses [Object]. To work correctly,
 /// [T] must implement `operator==` and `hashCode`.
 mixin class PropertyChangeNotifier<T extends Object> implements ChangeNotifier {
   ObserverList<Function>? _globalListeners = ObserverList<Function>();

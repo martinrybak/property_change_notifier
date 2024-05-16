@@ -66,10 +66,10 @@ class PropertyChangeProvider<T extends PropertyChangeNotifier<S>, S extends Obje
 
   /// Creates a [PropertyChangeProvider] that can be accessed by descendant widgets.
   const PropertyChangeProvider({
-    Key? key,
+    super.key,
     required this.value,
     required this.child,
-  })  : super(key: key);
+  });
 
   /// The instance of [T] to provide to descendant widgets.
   final T value;
@@ -80,7 +80,7 @@ class PropertyChangeProvider<T extends PropertyChangeNotifier<S>, S extends Obje
   final Widget child;
 
   @override
-  _PropertyChangeProviderState createState() => _PropertyChangeProviderState<T, S>();
+  PropertyChangeProviderState createState() => PropertyChangeProviderState<T, S>();
 }
 
 /// A convenience typedef to use in the common use case where property names are of type [String].
@@ -90,7 +90,7 @@ typedef StringPropertyChangeProvider<T extends PropertyChangeNotifier<String>> =
 /// Subscribes as a global listener to the [PropertyChangeNotifier] instance at [widget].[value].
 /// Rebuilds whenever a property is changed and creates a new [PropertyChangeModel] with a reference
 /// to itself so it can access the original model instance and changed property names.
-class _PropertyChangeProviderState<T extends PropertyChangeNotifier<S>, S extends Object> extends State<PropertyChangeProvider<T, S>> {
+class PropertyChangeProviderState<T extends PropertyChangeNotifier<S>, S extends Object> extends State<PropertyChangeProvider<T, S>> {
   Set<S> _properties = {};
 
   @override
@@ -137,14 +137,13 @@ class _PropertyChangeProviderState<T extends PropertyChangeNotifier<S>, S extend
 /// The type parameter [T] is the type of the [PropertyChangeNotifier<S>] subclass.
 /// The type parameter [S] is the type of the properties to observe.
 class PropertyChangeModel<T extends PropertyChangeNotifier<S>, S extends Object> extends InheritedModel<S> {
-  final _PropertyChangeProviderState<T, S> _state;
+  final PropertyChangeProviderState<T, S> _state;
 
   const PropertyChangeModel({
-    Key? key,
-    required _PropertyChangeProviderState<T, S> state,
-    required Widget child,
-  })  : _state = state,
-        super(key: key, child: child);
+    super.key,
+    required PropertyChangeProviderState<T, S> state,
+    required super.child,
+  })  : _state = state;
 
   /// The instance of [T] originally provided to the [PropertyChangeProvider] constructor.
   T get value => _state.widget.value;

@@ -52,13 +52,13 @@ void main() {
     });
 
     testWidgets('provides model instance to builder', (tester) async {
-      final model = MyModel();
-      final listener = expectAsync3((context, _model, property) {
-        expect(model, _model);
+      final expected = MyModel();
+      final listener = expectAsync3((context, actual, property) {
+        expect(expected, actual);
         return Container();
       }, count: 1);
       final widget = PropertyChangeProvider<MyModel, String>(
-        value: model,
+        value: expected,
         child: Builder(
           builder: (context) {
             return PropertyChangeConsumer<MyModel, String>(builder: listener);
@@ -153,13 +153,13 @@ void main() {
     });
 
     testWidgets('provides model instance to builder', (tester) async {
-      final model = MyModel();
-      final listener = expectAsync3((context, _model, property) {
-        expect(model, _model);
+      final expected = MyModel();
+      final listener = expectAsync3((context, actual, property) {
+        expect(expected, actual);
         return Container();
       }, count: 1);
       final widget = PropertyChangeProvider<MyModel, String>(
-        value: model,
+        value: expected,
         child: Builder(
           builder: (context) {
             return PropertyChangeConsumer<MyModel, String>(properties: const ['foo'], builder: listener);
