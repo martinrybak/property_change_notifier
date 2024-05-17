@@ -2,6 +2,7 @@
 
 * Updated minimum Dart SDK to 3.0.0
 * `PropertyChangeNotifier` can now be used as a mixin without causing compiler errors
+* Assert that listeners do not call dispose() #20 thanks to @Kantino777
 * Updated linter version and implemented suggested fixes
 * Regenerated example project to use latest Flutter template
 
