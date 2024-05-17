@@ -13,7 +13,6 @@
 *.iml
 *.ipr
 *.iws
-.idea/
 
 # The .vscode folder contains launch configuration and tasks you configure in
 # VS Code which you may wish to be included in version control, so this line
@@ -71,3 +70,10 @@ build/
 !**/ios/**/default.pbxuser
 !**/ios/**/default.perspectivev3
 !/packages/flutter_tools/test/data/dart_dependencies_test/**/.packages
+
+# Ignore the root .idea folder except certain folders
+!idea/
+.idea/*
+!/.idea/codeStyles/
+!/.idea/runConfigurations/
+!/.idea/dictionaries/
