@@ -135,15 +135,21 @@ mixin class PropertyChangeNotifier<T extends Object> implements ChangeNotifier {
     assert(_debugAssertNotDisposed());
     assert(property is! Iterable, 'notifyListeners() should only be called for one property at a time');
 
-    // All global listeners should be notified.
-    final List<Function> listenersToNotify = List<Function>.from(_globalListeners!);
+    // Always notify global listeners
+    _notifyListeners(_globalListeners!, property);
 
-    // All matching property listeners should be notified as well.
-    if (_propertyListeners!.containsKey(property)) {
-      listenersToNotify.addAll(_propertyListeners![property]!);
+    // If no property provided, exit
+    if (property == null) {
+      return;
     }
 
-    _notifyListeners(listenersToNotify, property);
+    // Check to make sure a global listener did not call dispose()
+    assert(_debugAssertNotDisposed());
+
+    // If listeners exist for this property, notify them.
+    if (_propertyListeners!.containsKey(property)) {
+      _notifyListeners(_propertyListeners![property]!, property);
+    }
   }
 
   /// Adds [listener] to [listeners] only if is not already present.
@@ -156,9 +162,12 @@ mixin class PropertyChangeNotifier<T extends Object> implements ChangeNotifier {
   /// Creates a local copy of [listeners] in case a callback calls
   /// [addListener] or [removeListener] while iterating through the list.
   /// Invokes each listener. If the listener accepts a property parameter, it will be provided.
-  void _notifyListeners(List<Function> listeners, T? property) {
+  void _notifyListeners(ObserverList<Function> listeners, T? property) {
     final localListeners = List<Function>.from(listeners);
     for (final listener in localListeners) {
+      // Check to make sure that a previous listener did not call dispose()
+      assert(_debugAssertNotDisposed());
+
       // One last check to make sure the listener hasn't been removed
       // from the original list since the time we made our local copy.
       if (listeners.contains(listener)) {

@@ -204,6 +204,29 @@ void main() {
       model.notifyListeners(property);
     });
 
+    test('global listener calling dispose() before another global listener throws assertion', () {
+      final model = PropertyChangeNotifier();
+      model.addListener(() => model.dispose());
+      model.addListener((){});
+      expect(() => model.notifyListeners(), throwsAssertionError);
+    });
+
+    test('global listener calling dispose() before a property listener throws assertion', () {
+      final model = PropertyChangeNotifier();
+      const property = 'foo';
+      model.addListener(() => model.dispose());
+      model.addListener((){}, [property]);
+      expect(() => model.notifyListeners(property), throwsAssertionError);
+    });
+
+    test('property listener calling dispose() before another property listener throws assertion', () {
+      final model = PropertyChangeNotifier();
+      const property = 'foo';
+      model.addListener(() => model.dispose(), [property]);
+      model.addListener((){}, [property]);
+      expect(() => model.notifyListeners(property), throwsAssertionError);
+    });
+
     group('global listener', () {
       group('with no property parameter', () {
         test('is invoked when notifyListeners() is invoked with no properties', () {
@@ -354,17 +377,6 @@ void main() {
           final listener = expectAsync1((_) {}, count: 0);
           model.addListener(listener, ['foo', 'bar']);
           model.notifyListeners('baz');
-        });
-
-        test('is invoked when notifyListeners() is invoked with a global listener that disposes it', () {
-          final model = PropertyChangeNotifier();
-          model.addListener(() => model.dispose());
-          const expected = 'foo';
-          final listener = expectAsync1((actual) {
-            expect(expected, actual);
-          }, count: 1);
-          model.addListener(listener, [expected]);
-          model.notifyListeners(expected);
         });
       });
     });
