@@ -100,6 +100,15 @@ class PropertyChangeProviderState<T extends PropertyChangeNotifier<S>, S extends
   }
 
   @override
+  void didUpdateWidget(covariant PropertyChangeProvider<T, S> oldWidget) {
+    super.didUpdateWidget(oldWidget);
+    if (oldWidget.value != widget.value) {
+      oldWidget.value.removeListener(_listener);
+      widget.value.addListener(_listener);
+    }
+  }
+
+  @override
   void dispose() {
     widget.value.removeListener(_listener);
     super.dispose();
