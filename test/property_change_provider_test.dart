@@ -259,45 +259,6 @@ void main() {
       await tester.pump();
     });
 
-    testWidgets('listens to new model if model is replaced between builds', (tester) async {
-      final oldModel = MyModel();
-      final newModel = MyModel();
-      var model = oldModel;
-      var count = 0;
-      final listener = expectAsync0(() => count++, count: 3);
-      final widget = StatefulBuilder(builder: (context, setState){
-        return PropertyChangeProvider<MyModel, String>(
-          value: model,
-          child: Builder(
-            builder: (innerContext) {
-              final provider = PropertyChangeProvider.of<MyModel, String>(innerContext)!;
-              switch (count) {
-                //Initial build with old model; swap model for next build
-                case 0:
-                  expect(provider.value, oldModel);
-                  WidgetsBinding.instance!.addPostFrameCallback((_) {
-                    setState(() {
-                      model = newModel;
-                    });
-                  });
-                //Rebuilt with new model as a result of setState()
-                case 1:
-                  expect(provider.value, newModel);
-                //Rebuilt as a result of listener on new model
-                case 2:
-                  expect(provider.value, newModel);
-              }
-              return BuildDetector(listener);
-          })
-        );
-      });
-
-      await tester.pumpWidget(widget);
-      await tester.pump();
-      newModel.notifyListeners();
-      await tester.pump();
-    });
-
     testWidgets('can access changed properties when notifyListeners() called with a property', (tester) async {
       final model = MyModel();
       const property = 'foo';
@@ -314,6 +275,45 @@ void main() {
 
       await tester.pumpWidget(widget);
       model.notifyListeners(property);
+      await tester.pump();
+    });
+
+    testWidgets('listens to new model if model is replaced between builds', (tester) async {
+      final oldModel = MyModel();
+      final newModel = MyModel();
+      var model = oldModel;
+      var count = 0;
+      final listener = expectAsync0(() => count++, count: 3);
+      final widget = StatefulBuilder(builder: (context, setState){
+        return PropertyChangeProvider<MyModel, String>(
+            value: model,
+            child: Builder(
+                builder: (innerContext) {
+                  final provider = PropertyChangeProvider.of<MyModel, String>(innerContext)!;
+                  switch (count) {
+                  //Initial build with old model; swap model for next build
+                    case 0:
+                      expect(provider.value, oldModel);
+                      WidgetsBinding.instance!.addPostFrameCallback((_) {
+                        setState(() {
+                          model = newModel;
+                        });
+                      });
+                  //Rebuilt with new model as a result of setState()
+                    case 1:
+                      expect(provider.value, newModel);
+                  //Rebuilt as a result of listener on new model
+                    case 2:
+                      expect(provider.value, newModel);
+                  }
+                  return BuildDetector(listener);
+                })
+        );
+      });
+
+      await tester.pumpWidget(widget);
+      await tester.pump();
+      newModel.notifyListeners();
       await tester.pump();
     });
   });
