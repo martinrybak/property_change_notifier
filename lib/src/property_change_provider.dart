@@ -68,8 +68,8 @@ class PropertyChangeProvider<T extends PropertyChangeNotifier<S>, S extends Obje
   const PropertyChangeProvider({
     super.key,
     required this.value,
-    required this.child,
-  });
+    Widget? child,
+  }) : child = child ?? const SizedBox();
 
   /// The instance of [T] to provide to descendant widgets.
   final T value;
@@ -81,6 +81,12 @@ class PropertyChangeProvider<T extends PropertyChangeNotifier<S>, S extends Obje
 
   @override
   PropertyChangeProviderState createState() => PropertyChangeProviderState<T, S>();
+
+  /// Returns a new instance of this [PropertyChangeProvider] with a new child.
+  /// Used by [MultiPropertyChangeProvider].
+  PropertyChangeProvider<T, S> copyWithChild(Widget newChild) {
+    return PropertyChangeProvider(key: key, value: value, child: newChild);
+  }
 }
 
 /// A convenience typedef to use in the common use case where property names are of type [String].
@@ -159,5 +165,27 @@ class PropertyChangeModel<T extends PropertyChangeNotifier<S>, S extends Object>
   @override
   bool updateShouldNotifyDependent(PropertyChangeModel<T, S> oldWidget, Set<S> dependencies) {
     return dependencies.intersection(_state._properties).isNotEmpty;
+  }
+}
+
+/// Provides an alternative to nesting multiple [PropertyChangeProvider] widgets
+/// by declaring them all at once in a single list with a single child.
+class MultiPropertyChangeProvider extends StatelessWidget {
+  final List<PropertyChangeProvider> providers;
+  final Widget child;
+
+  const MultiPropertyChangeProvider({
+    super.key,
+    required this.child,
+    required this.providers,
+  });
+
+  @override
+  Widget build(BuildContext context) {
+    var widget = child;
+    for (final provider in providers.reversed) {
+      widget = provider.copyWithChild(widget);
+    }
+    return widget;
   }
 }
