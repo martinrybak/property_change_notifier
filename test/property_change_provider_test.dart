@@ -425,6 +425,57 @@ void main() {
       await tester.pump();
     });
   });
+
+  group('MultiProvider tests', () {
+    testWidgets('works with no providers', (tester) async {
+      final listener = expectAsync0(() {}, count: 1);
+      final widget = MultiPropertyChangeProvider(providers: const [], child: BuildDetector(listener));
+      await tester.pumpWidget(widget);
+    });
+
+    testWidgets('works with one provider', (tester) async {
+      final model = MyModel();
+      final listener = expectAsync0(() {}, count: 2);
+
+      final provider = PropertyChangeProvider<MyModel, String>(value: model);
+      final child = Builder(
+        builder: (context) {
+          PropertyChangeProvider.of<MyModel, String>(context);
+          return BuildDetector(listener);
+        },
+      );
+      
+      final widget = MultiPropertyChangeProvider(providers: [provider], child: child);
+      await tester.pumpWidget(widget);
+      model.notifyListeners();
+      await tester.pump();
+    });
+
+    testWidgets('works with multiple providers', (tester) async {
+      final listener = expectAsync0(() {}, count: 3);
+
+      final model1 = MyModel();
+      final provider1 = PropertyChangeProvider<MyModel, String>(value: model1);
+
+      final model2 = OtherModel();
+      final provider2 = PropertyChangeProvider<OtherModel, String>(value: model2);
+
+      final child = Builder(
+        builder: (context) {
+          PropertyChangeProvider.of<MyModel, String>(context);
+          PropertyChangeProvider.of<OtherModel, String>(context);
+          return BuildDetector(listener);
+        },
+      );
+
+      final widget = MultiPropertyChangeProvider(providers: [provider1, provider2], child: child);
+      await tester.pumpWidget(widget);
+      model1.notifyListeners();
+      await tester.pump();
+      model2.notifyListeners();
+      await tester.pump();
+    });
+  });
 }
 
 class MyModel extends PropertyChangeNotifier<String> {}
