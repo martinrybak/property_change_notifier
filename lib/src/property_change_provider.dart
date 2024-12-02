@@ -182,10 +182,10 @@ class MultiPropertyChangeProvider extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    var widget = child;
+    var current = child;
     for (final provider in providers.reversed) {
-      widget = provider.copyWithChild(widget);
+      current = provider.copyWithChild(current);
     }
-    return widget;
+    return current;
   }
 }
