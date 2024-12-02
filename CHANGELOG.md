@@ -1,3 +1,9 @@
+## 0.5.0
+
+* Bugfix #23: Update listeners if widget model is replaced between builds
+* Feature #5: Inject multiple PropertyChangeProvider at the root of app
+* Updated flutter_lints version to 5.0.0 and implemented suggested fixes
+
 ## 0.4.0
 
 * Updated minimum Dart SDK to 3.0.0
