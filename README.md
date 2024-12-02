@@ -262,6 +262,36 @@ Widget build(BuildContext context) {
 }
 ```
 
+### Multiple nested providers
+If you have multiple `PropertyChangeProvider` widgets you wish to expose at the root of your tree, you can use the `MultiPropertyChangeProvider` to avoid nesting:
+
+```
+MultiPropertyChangeProvider(
+  providers: [
+    PropertyChangeProvider<MyModel, String>(value: MyModel()),
+    PropertyChangeProvider<FooModel, String>(value: FooModel()),
+    PropertyChangeProvider<BarModel, String>(value: BarModel()),
+  ],
+  child: ...
+);
+```
+
+This is semantically equivalent, but much easier to read, than:
+
+```
+PropertyChangeProvider<MyModel, String>(
+  value: MyModel(),
+  child: PropertyChangeProvider<FooModel, String>(
+    value: FooModel()),
+    child: PropertyChangeProvider<BarModel, String>(
+       value: BarModel()),
+       child: ...
+	 ),
+  ),
+);
+
+```
+
 ### Type Alases
 
 Thanks to the new type alias feature avaiable as of Dart 2.13, this package comes with several less verbose alternatives to use in the common use case where property names are of type `String`.
