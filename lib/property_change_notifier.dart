@@ -1,4 +1,4 @@
-library property_change_notifier;
+library;
 
 export 'src/property_change_notifier.dart';
 export 'src/property_change_provider.dart';

@@ -294,7 +294,7 @@ void main() {
                   //Initial build with old model; swap model for next build
                     case 0:
                       expect(provider.value, oldModel);
-                      WidgetsBinding.instance!.addPostFrameCallback((_) {
+                      WidgetsBinding.instance.addPostFrameCallback((_) {
                         setState(() {
                           model = newModel;
                         });
